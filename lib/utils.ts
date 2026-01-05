@@ -32,12 +32,32 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
+// Haptic feedback patterns
+export const HapticPattern = {
+  light: 10,
+  medium: 20,
+  heavy: 50,
+  success: [10, 50, 10],
+  error: [50, 100, 50],
+  superLike: [20, 50, 20, 50, 20],
+};
+
 // Trigger haptic feedback (web-compatible)
-export function vibrate(duration: number = 50): void {
+export function vibrate(pattern: number | number[] = 50): void {
   if (typeof navigator !== 'undefined' && navigator.vibrate) {
-    navigator.vibrate(duration);
+    navigator.vibrate(pattern);
   }
 }
+
+// Convenience functions for common haptic patterns
+export const haptic = {
+  light: () => vibrate(HapticPattern.light),
+  medium: () => vibrate(HapticPattern.medium),
+  heavy: () => vibrate(HapticPattern.heavy),
+  success: () => vibrate(HapticPattern.success),
+  error: () => vibrate(HapticPattern.error),
+  superLike: () => vibrate(HapticPattern.superLike),
+};
 
 // Get expiration time (24 hours from now)
 export function getExpirationTime(): string {

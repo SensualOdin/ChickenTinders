@@ -5,6 +5,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useGroup } from '../../lib/hooks/useGroup';
 import { detectMatches, saveMatches, getMatches, MatchResult } from '../../lib/utils/matches';
 import { getMockRestaurants } from '../../lib/api/mock-restaurants';
+import { ConfettiCelebration } from '../../components/animations/ConfettiCelebration';
+import { ResultsCardSkeleton } from '../../components/ui/LoadingSkeleton';
 
 export default function ResultsPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -14,6 +16,7 @@ export default function ResultsPage() {
   const [matches, setMatches] = useState<MatchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [detecting, setDetecting] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     if (!id || !group) return;
@@ -40,6 +43,9 @@ export default function ResultsPage() {
           await saveMatches(id, detectedMatches);
           setMatches(detectedMatches);
           toast.success('🎉 Matches found!');
+          setShowConfetti(true);
+          // Hide confetti after animation
+          setTimeout(() => setShowConfetti(false), 3000);
         }
 
         setDetecting(false);
@@ -68,12 +74,19 @@ export default function ResultsPage() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" color="#E53935" />
-        <Text className="text-gray-600 mt-4">
-          {detecting ? 'Finding your matches...' : 'Loading results...'}
-        </Text>
-      </View>
+      <ScrollView className="flex-1 bg-background">
+        <Toaster position="top-center" />
+        <View className="max-w-app mx-auto w-full px-4 py-6">
+          <View className="items-center mb-6">
+            <ActivityIndicator size="large" color="#E53935" />
+            <Text className="text-gray-600 mt-4">
+              {detecting ? 'Finding your matches...' : 'Loading results...'}
+            </Text>
+          </View>
+          <ResultsCardSkeleton />
+          <ResultsCardSkeleton />
+        </View>
+      </ScrollView>
     );
   }
 
@@ -104,6 +117,7 @@ export default function ResultsPage() {
   return (
     <ScrollView className="flex-1 bg-background">
       <Toaster position="top-center" />
+      {showConfetti && <ConfettiCelebration />}
       <View className="max-w-app mx-auto w-full px-4 py-6">
         {/* Celebration Header */}
         <View className="items-center mb-6">

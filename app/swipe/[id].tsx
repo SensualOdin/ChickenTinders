@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, ScrollView, Pressable } from 'react-native';
+import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useGroup } from '../../lib/hooks/useGroup';
-import { RestaurantCard } from '../../components/deck/RestaurantCard';
+import { SwipeableCard } from '../../components/deck/SwipeableCard';
+import { RestaurantCardSkeleton } from '../../components/ui/LoadingSkeleton';
 import { getRestaurantsForGroup, YelpBusiness } from '../../lib/api/yelp';
 import { getMockRestaurants } from '../../lib/api/mock-restaurants';
 import { supabase } from '../../lib/supabase';
 import { getUserId } from '../../lib/storage';
-import { vibrate } from '../../lib/utils';
+import { haptic } from '../../lib/utils';
 
 export default function SwipePage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -93,12 +94,14 @@ export default function SwipePage() {
 
       if (swipeError) throw swipeError;
 
-      // Haptic feedback
-      vibrate(isSuperLike ? 100 : 50);
-
-      // Show feedback
+      // Haptic feedback with enhanced patterns
       if (isSuperLike) {
+        haptic.superLike();
         toast.success('⭐ Super Liked!');
+      } else if (isLiked) {
+        haptic.success();
+      } else {
+        haptic.light();
       }
 
       // Move to next card
@@ -125,9 +128,40 @@ export default function SwipePage() {
 
   if (groupLoading || loading) {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" color="#E53935" />
-        <Text className="text-gray-600 mt-4">Loading restaurants...</Text>
+      <View className="flex-1 bg-background">
+        <Toaster position="top-center" />
+
+        {/* Header */}
+        <View className="bg-white px-4 py-3 shadow-sm z-20">
+          <View className="max-w-app mx-auto w-full">
+            <View className="flex-row items-center justify-between mb-2">
+              <Pressable onPress={() => router.back()}>
+                <Text className="text-primary text-base font-semibold">← Back</Text>
+              </Pressable>
+              <Text className="text-base font-semibold text-gray-700">
+                Loading...
+              </Text>
+            </View>
+            <View className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+              <View className="h-full bg-gray-300 w-1/4" />
+            </View>
+          </View>
+        </View>
+
+        {/* Skeleton Card */}
+        <View className="flex-1 items-center justify-center">
+          <View className="w-full max-w-app px-4">
+            <RestaurantCardSkeleton />
+          </View>
+        </View>
+
+        <View className="bg-white px-4 py-4 border-t border-gray-200 z-20">
+          <View className="max-w-app mx-auto w-full">
+            <Text className="text-center text-sm text-gray-600">
+              Loading restaurants...
+            </Text>
+          </View>
+        </View>
       </View>
     );
   }
@@ -167,7 +201,6 @@ export default function SwipePage() {
     );
   }
 
-  const currentRestaurant = restaurants[currentIndex];
   const progress = ((currentIndex + 1) / restaurants.length) * 100;
 
   return (
@@ -175,7 +208,7 @@ export default function SwipePage() {
       <Toaster position="top-center" />
 
       {/* Header */}
-      <View className="bg-white px-4 py-3 shadow-sm">
+      <View className="bg-white px-4 py-3 shadow-sm z-20">
         <View className="max-w-app mx-auto w-full">
           <View className="flex-row items-center justify-between mb-2">
             <Pressable onPress={() => router.back()}>
@@ -195,27 +228,42 @@ export default function SwipePage() {
         </View>
       </View>
 
-      {/* Card Container */}
-      <ScrollView
-        className="flex-1"
-        contentContainerClassName="items-center justify-center py-6"
-      >
-        <View className="w-full max-w-app px-4">
-          <RestaurantCard
-            restaurant={currentRestaurant}
-            onLike={handleLike}
-            onDislike={handleDislike}
-            onSuperLike={handleSuperLike}
-            showButtons={true}
-          />
+      {/* Card Stack Container */}
+      <View className="flex-1 items-center justify-center">
+        <View className="w-full max-w-app px-4 h-[600px] relative">
+          {/* Show next 3 cards in stack */}
+          {restaurants.slice(currentIndex, currentIndex + 3).map((restaurant, index) => (
+            <View
+              key={restaurant.id}
+              className="absolute inset-0"
+              style={{
+                zIndex: 3 - index,
+                transform: [
+                  { scale: 1 - index * 0.03 },
+                  { translateY: index * -8 },
+                ],
+              }}
+            >
+              <SwipeableCard
+                restaurant={restaurant}
+                onLike={handleLike}
+                onDislike={handleDislike}
+                onSuperLike={handleSuperLike}
+                isActive={index === 0}
+              />
+            </View>
+          ))}
         </View>
-      </ScrollView>
+      </View>
 
-      {/* Info Footer */}
-      <View className="bg-white px-4 py-3 border-t border-gray-200">
+      {/* Swipe Hint */}
+      <View className="bg-white px-4 py-4 border-t border-gray-200 z-20">
         <View className="max-w-app mx-auto w-full">
-          <Text className="text-center text-sm text-gray-600">
+          <Text className="text-center text-sm text-gray-600 mb-2">
             {members.length} {members.length === 1 ? 'person' : 'people'} swiping together
+          </Text>
+          <Text className="text-center text-xs text-gray-500">
+            👈 Swipe left to pass • Swipe right to like 👉 • Swipe up for super like 👆
           </Text>
         </View>
       </View>

@@ -1,0 +1,253 @@
+import { useEffect } from 'react';
+import { View, Text, Image, Pressable } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  useAnimatedGestureHandler,
+  withSpring,
+  withTiming,
+  interpolate,
+  runOnJS,
+  Extrapolation,
+} from 'react-native-reanimated';
+import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
+import { YelpBusiness } from '../../lib/api/yelp';
+
+type SwipeableCardProps = {
+  restaurant: YelpBusiness;
+  onLike: () => void;
+  onDislike: () => void;
+  onSuperLike: () => void;
+  isActive: boolean;
+};
+
+const SWIPE_THRESHOLD = 120;
+const ROTATION_ANGLE = 30;
+
+type ContextType = {
+  startX: number;
+  startY: number;
+};
+
+export function SwipeableCard({
+  restaurant,
+  onLike,
+  onDislike,
+  onSuperLike,
+  isActive,
+}: SwipeableCardProps) {
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const scale = useSharedValue(isActive ? 1 : 0.95);
+  const opacity = useSharedValue(isActive ? 1 : 0.8);
+
+  // Animate when card becomes active
+  useEffect(() => {
+    scale.value = withSpring(isActive ? 1 : 0.95, { damping: 15 });
+    opacity.value = withTiming(isActive ? 1 : 0.8);
+  }, [isActive]);
+
+  const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, ContextType>({
+    onStart: (_, context) => {
+      context.startX = translateX.value;
+      context.startY = translateY.value;
+    },
+    onActive: (event, context) => {
+      translateX.value = context.startX + event.translationX;
+      translateY.value = context.startY + event.translationY;
+    },
+    onEnd: (event) => {
+      const swipeRight = translateX.value > SWIPE_THRESHOLD;
+      const swipeLeft = translateX.value < -SWIPE_THRESHOLD;
+      const swipeUp = translateY.value < -SWIPE_THRESHOLD;
+
+      if (swipeUp) {
+        // Super Like - swipe up
+        translateY.value = withTiming(-1000, { duration: 300 });
+        translateX.value = withTiming(0, { duration: 300 });
+        runOnJS(onSuperLike)();
+      } else if (swipeRight) {
+        // Like - swipe right
+        translateX.value = withTiming(1000, { duration: 300 });
+        runOnJS(onLike)();
+      } else if (swipeLeft) {
+        // Dislike - swipe left
+        translateX.value = withTiming(-1000, { duration: 300 });
+        runOnJS(onDislike)();
+      } else {
+        // Return to center
+        translateX.value = withSpring(0, { damping: 15 });
+        translateY.value = withSpring(0, { damping: 15 });
+      }
+    },
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const rotate = interpolate(
+      translateX.value,
+      [-200, 0, 200],
+      [-ROTATION_ANGLE, 0, ROTATION_ANGLE],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        { rotate: `${rotate}deg` },
+        { scale: scale.value },
+      ],
+      opacity: opacity.value,
+    };
+  });
+
+  // Animated overlays for visual feedback
+  const likeOverlayStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      translateX.value,
+      [0, SWIPE_THRESHOLD],
+      [0, 1],
+      Extrapolation.CLAMP
+    );
+    return { opacity };
+  });
+
+  const nopeOverlayStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      translateX.value,
+      [-SWIPE_THRESHOLD, 0],
+      [1, 0],
+      Extrapolation.CLAMP
+    );
+    return { opacity };
+  });
+
+  const superLikeOverlayStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      translateY.value,
+      [-SWIPE_THRESHOLD, 0],
+      [1, 0],
+      Extrapolation.CLAMP
+    );
+    return { opacity };
+  });
+
+  const distanceInMiles = (restaurant.distance / 1609.34).toFixed(1);
+  const cuisine = restaurant.categories[0]?.title || 'Restaurant';
+  const price = restaurant.price || '$$';
+
+  return (
+    <PanGestureHandler onGestureEvent={gestureHandler} enabled={isActive}>
+      <Animated.View
+        style={[animatedStyle]}
+        className="absolute w-full h-full"
+      >
+        <View className="w-full h-full bg-white rounded-3xl overflow-hidden shadow-xl">
+          {/* Like Overlay */}
+          <Animated.View
+            style={[likeOverlayStyle]}
+            className="absolute top-12 left-8 z-10 bg-success px-6 py-3 rounded-2xl border-4 border-white rotate-12"
+          >
+            <Text className="text-white text-3xl font-black">LIKE</Text>
+          </Animated.View>
+
+          {/* Nope Overlay */}
+          <Animated.View
+            style={[nopeOverlayStyle]}
+            className="absolute top-12 right-8 z-10 bg-gray-700 px-6 py-3 rounded-2xl border-4 border-white -rotate-12"
+          >
+            <Text className="text-white text-3xl font-black">NOPE</Text>
+          </Animated.View>
+
+          {/* Super Like Overlay */}
+          <Animated.View
+            style={[superLikeOverlayStyle]}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-secondary px-8 py-4 rounded-2xl border-4 border-white"
+          >
+            <Text className="text-white text-4xl font-black">SUPER LIKE ⭐</Text>
+          </Animated.View>
+
+          {/* Restaurant Image */}
+          {restaurant.image_url ? (
+            <Image
+              source={{ uri: restaurant.image_url }}
+              className="w-full h-96"
+              resizeMode="cover"
+            />
+          ) : (
+            <View className="w-full h-96 bg-gray-200 items-center justify-center">
+              <Text className="text-6xl">🍽️</Text>
+            </View>
+          )}
+
+          {/* Restaurant Info */}
+          <View className="p-6">
+            <Text className="text-3xl font-bold text-textDark mb-2">
+              {restaurant.name}
+            </Text>
+
+            <View className="flex-row items-center gap-2 mb-3">
+              <Text className="text-lg text-gray-700">{cuisine}</Text>
+              <Text className="text-lg text-gray-400">•</Text>
+              <Text className="text-lg font-semibold text-primary">{price}</Text>
+            </View>
+
+            <View className="flex-row items-center gap-4 mb-4">
+              <View className="flex-row items-center gap-1">
+                <Text className="text-xl">⭐</Text>
+                <Text className="text-base font-semibold text-gray-700">
+                  {restaurant.rating}
+                </Text>
+              </View>
+              <View className="flex-row items-center gap-1">
+                <Text className="text-xl">📍</Text>
+                <Text className="text-base text-gray-700">
+                  {distanceInMiles} mi
+                </Text>
+              </View>
+            </View>
+
+            <Text className="text-sm text-gray-600 mb-6">
+              {restaurant.location.display_address.join(', ')}
+            </Text>
+
+            {/* Action Buttons (Fallback for desktop/accessibility) */}
+            {isActive && (
+              <View className="flex-row justify-between gap-4">
+                <Pressable
+                  onPress={onDislike}
+                  className="flex-1 bg-gray-200 py-4 rounded-xl items-center active:scale-95"
+                >
+                  <Text className="text-3xl">✗</Text>
+                  <Text className="text-sm font-semibold text-gray-700 mt-1">
+                    Nope
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={onSuperLike}
+                  className="flex-1 bg-secondary py-4 rounded-xl items-center active:scale-95"
+                >
+                  <Text className="text-3xl">⭐</Text>
+                  <Text className="text-sm font-semibold text-white mt-1">
+                    Super Like
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={onLike}
+                  className="flex-1 bg-success py-4 rounded-xl items-center active:scale-95"
+                >
+                  <Text className="text-3xl">♥</Text>
+                  <Text className="text-sm font-semibold text-white mt-1">
+                    Like
+                  </Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
+        </View>
+      </Animated.View>
+    </PanGestureHandler>
+  );
+}
