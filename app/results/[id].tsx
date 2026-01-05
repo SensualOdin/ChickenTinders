@@ -90,14 +90,20 @@ export default function ResultsPage() {
           table: 'swipes',
           filter: `group_id=eq.${id}`,
         },
-        () => {
-          console.log('Swipe change detected, refetching status...');
+        (payload) => {
+          console.log('Swipe change detected!', payload);
           fetchSwipeStatus();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to swipes for group:', id);
+        }
+      });
 
     return () => {
+      console.log('Unsubscribing from swipes');
       subscription.unsubscribe();
     };
   }, [id, members]);
