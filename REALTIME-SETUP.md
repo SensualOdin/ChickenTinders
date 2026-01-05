@@ -1,8 +1,10 @@
 # Supabase Realtime Setup
 
-## 📡 Enable Realtime for group_members Table
+## 📡 Enable Realtime for Tables
 
-For the real-time lobby to work, you need to enable Supabase Realtime on the `group_members` table.
+For optimal real-time performance, enable Supabase Realtime on these tables:
+- `group_members` - Real-time lobby updates
+- `swipes` - Real-time swipe progress (optional, polling fallback exists)
 
 ### Quick Setup (30 seconds):
 
@@ -12,8 +14,10 @@ For the real-time lobby to work, you need to enable Supabase Realtime on the `gr
    - Click "Database" in the left sidebar
    - Click "Replication" tab
 
-3. **Enable Realtime for group_members**:
+3. **Enable Realtime for both tables**:
    - Find the `group_members` table in the list
+   - Toggle the switch to **ON** (should turn green)
+   - Find the `swipes` table in the list
    - Toggle the switch to **ON** (should turn green)
 
 4. **Done!** Real-time updates will now work instantly.
@@ -22,13 +26,23 @@ For the real-time lobby to work, you need to enable Supabase Realtime on the `gr
 
 ## ✅ Verify It's Working
 
-After enabling:
-
+### Test Lobby (group_members):
 1. Open your lobby in 2 different browser tabs (or incognito)
 2. Copy the lobby URL from tab 1
 3. Open it in tab 2
 4. Enter a different name in tab 2
 5. Watch tab 1 - the new member should appear instantly! 🎉
+
+### Test Swipe Progress (swipes):
+1. Create a group with 2 members
+2. User 1 finishes swiping first → sees "Waiting for Everyone..."
+3. User 2 swipes on their device
+4. User 1's browser console should show:
+   - `Subscription status: SUBSCRIBED`
+   - `Swipe change detected!` (when User 2 swipes)
+5. User 1 should see results appear automatically when User 2 finishes
+
+**Note**: Even without Realtime enabled for `swipes`, the app uses 2-second polling as a fallback. Enabling Realtime just makes updates instant (< 100ms instead of ~2 seconds).
 
 ---
 
@@ -37,8 +51,9 @@ After enabling:
 If you prefer SQL, run this in the SQL Editor:
 
 ```sql
--- Enable Realtime for group_members table
+-- Enable Realtime for both tables
 ALTER PUBLICATION supabase_realtime ADD TABLE group_members;
+ALTER PUBLICATION supabase_realtime ADD TABLE swipes;
 ```
 
 ---
