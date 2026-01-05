@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ErrorBoundary } from 'react-error-boundary';
 import { View, Text } from 'react-native';
+import { AuthProvider } from '../lib/contexts/AuthContext';
 
 // Error Fallback Component
 function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
@@ -25,16 +26,18 @@ function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetError
 export default function RootLayout() {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: '#FAFAFA' },
-        }}
-      >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="[...missing]" />
-      </Stack>
+      <AuthProvider>
+        <StatusBar style="dark" />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: '#FAFAFA' },
+          }}
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="[...missing]" />
+        </Stack>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }

@@ -1,11 +1,30 @@
 import { View, Text, Pressable } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import { useAuth } from '../lib/contexts/AuthContext';
 
 export default function LandingPage() {
+  const router = useRouter();
+  const { user, profile, isGuest } = useAuth();
+
   return (
     <View className="flex-1 bg-background">
       {/* Container with max-width for desktop */}
       <View className="flex-1 max-w-app mx-auto w-full px-4">
+
+        {/* Account Button - Top Right */}
+        <View className="absolute top-4 right-4 z-10">
+          <Pressable
+            onPress={() => router.push('/account')}
+            className="bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200 flex-row items-center gap-2 active:scale-95"
+          >
+            <Text className="text-xl">👤</Text>
+            {!isGuest && profile && (
+              <Text className="text-sm font-semibold text-textDark">
+                {profile.display_name}
+              </Text>
+            )}
+          </Pressable>
+        </View>
 
         {/* Hero Section */}
         <View className="flex-1 justify-center items-center">

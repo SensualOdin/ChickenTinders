@@ -109,6 +109,7 @@ export default function CreateGroupPage() {
           price_tier: priceTier,
           expires_at: getExpirationTime(),
           status: 'waiting',
+          creator_id: userId,
         })
         .select()
         .single();
