@@ -207,41 +207,6 @@ export function SwipeableCard({
             <Text className="text-xs text-gray-600 mb-4">
               {restaurant.location.display_address.join(', ')}
             </Text>
-
-            {/* Action Buttons (Fallback for desktop/accessibility) */}
-            {isActive && (
-              <View className="flex-row justify-between gap-3">
-                <Pressable
-                  onPress={onDislike}
-                  className="flex-1 bg-gray-200 py-3 rounded-xl items-center active:scale-95"
-                >
-                  <Text className="text-2xl">✗</Text>
-                  <Text className="text-xs font-semibold text-gray-700 mt-1">
-                    Nope
-                  </Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={onSuperLike}
-                  className="flex-1 bg-secondary py-3 rounded-xl items-center active:scale-95"
-                >
-                  <Text className="text-2xl">⭐</Text>
-                  <Text className="text-xs font-semibold text-white mt-1">
-                    Super
-                  </Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={onLike}
-                  className="flex-1 bg-success py-3 rounded-xl items-center active:scale-95"
-                >
-                  <Text className="text-2xl">♥</Text>
-                  <Text className="text-xs font-semibold text-white mt-1">
-                    Like
-                  </Text>
-                </Pressable>
-              </View>
-            )}
           </View>
           </View>
         </View>

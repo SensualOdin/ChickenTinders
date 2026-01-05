@@ -1,3 +1,5 @@
+import { ConfettiCelebration } from '../../components/animations/ConfettiCelebration';
+import { FontAwesome } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -134,18 +136,21 @@ export default function SwipePage() {
           <Toaster position="top-center" />
 
         {/* Header */}
-        <View className="bg-white px-4 py-3 shadow-sm z-20">
+        <View className="bg-white/90 px-4 py-4 shadow-sm z-20 backdrop-blur-sm">
           <View className="max-w-app mx-auto w-full">
-            <View className="flex-row items-center justify-between mb-2">
-              <Pressable onPress={() => router.back()}>
-                <Text className="text-primary text-base font-semibold">← Back</Text>
+            <View className="flex-row items-center justify-between mb-3">
+              <Pressable 
+                onPress={() => router.back()}
+                className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center active:scale-95 transition-all"
+              >
+                <FontAwesome name="chevron-left" size={16} color="#4B5563" />
               </Pressable>
               <Text className="text-base font-semibold text-gray-700">
                 Loading...
               </Text>
             </View>
-            <View className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
-              <View className="h-full bg-gray-300 w-1/4" />
+            <View className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <View className="h-full bg-gray-300 w-1/4 animate-pulse" />
             </View>
           </View>
         </View>
@@ -194,15 +199,21 @@ export default function SwipePage() {
   if (currentIndex >= restaurants.length) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <View className="flex-1 bg-background items-center justify-center px-4">
-        <Text className="text-6xl mb-4">✅</Text>
-        <Text className="text-2xl font-bold text-textDark mb-2">
-          All Done!
-        </Text>
-        <Text className="text-base text-gray-600 text-center mb-6">
-          Checking for matches...
-        </Text>
-        <ActivityIndicator size="large" color="#E53935" />
+        <View className="flex-1 bg-background items-center justify-center px-4 relative">
+          <ConfettiCelebration />
+          <View className="bg-white p-8 rounded-3xl shadow-soft items-center w-full max-w-sm z-10">
+            <Text className="text-6xl mb-6 animate-bounce">⏱️</Text>
+            <Text className="text-2xl font-bold text-textDark mb-3 text-center" style={{ fontFamily: 'Playfair Display' }}>
+              Waiting for friends...
+            </Text>
+            <Text className="text-base text-textMuted text-center mb-8 leading-relaxed">
+              You've swiped through all available restaurants! Hang tight while your group catches up.
+            </Text>
+            <View className="flex-row items-center gap-3 bg-accent/20 px-6 py-3 rounded-full">
+              <ActivityIndicator size="small" color="#8B2635" />
+              <Text className="text-primary font-medium">Checking for matches...</Text>
+            </View>
+          </View>
         </View>
       </GestureHandlerRootView>
     );
@@ -216,20 +227,28 @@ export default function SwipePage() {
         <Toaster position="top-center" />
 
       {/* Header */}
-      <View className="bg-white px-4 py-3 shadow-sm z-20">
+      <View className="bg-white/90 px-4 py-4 shadow-sm z-20 backdrop-blur-sm">
         <View className="max-w-app mx-auto w-full">
-          <View className="flex-row items-center justify-between mb-2">
-            <Pressable onPress={() => router.back()}>
-              <Text className="text-primary text-base font-semibold">← Back</Text>
+          <View className="flex-row items-center justify-between mb-3">
+            <Pressable 
+              onPress={() => router.back()}
+              className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center active:scale-95 transition-all"
+            >
+              <FontAwesome name="chevron-left" size={16} color="#4B5563" />
             </Pressable>
-            <Text className="text-base font-semibold text-gray-700">
-              {currentIndex + 1} of {restaurants.length}
-            </Text>
+            <View className="items-end">
+              <Text className="text-xs font-semibold text-primary uppercase tracking-wider">
+                Restaurants Found
+              </Text>
+              <Text className="text-lg font-bold text-textDark" style={{ fontFamily: 'Playfair Display' }}>
+                {currentIndex + 1} <Text className="text-gray-400 text-sm font-normal">of</Text> {restaurants.length}
+              </Text>
+            </View>
           </View>
           {/* Progress Bar */}
-          <View className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+          <View className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <View
-              className="h-full bg-primary"
+              className="h-full bg-primary rounded-full"
               style={{ width: `${progress}%` }}
             />
           </View>
@@ -264,15 +283,34 @@ export default function SwipePage() {
         </View>
       </View>
 
-      {/* Swipe Hint */}
-      <View className="bg-white px-4 py-4 border-t border-gray-200 z-20">
-        <View className="max-w-app mx-auto w-full">
-          <Text className="text-center text-sm text-gray-600 mb-2">
-            {members.length} {members.length === 1 ? 'person' : 'people'} swiping together
-          </Text>
-          <Text className="text-center text-xs text-gray-500">
-            👈 Swipe left to pass • Swipe right to like 👉 • Swipe up for super like 👆
-          </Text>
+      {/* Action Buttons */}
+      <View className="px-6 pb-8 pt-2 z-20">
+        <View className="max-w-app mx-auto w-full flex-row justify-center items-center gap-8">
+          
+          {/* Pass Button */}
+          <Pressable
+            onPress={() => handleSwipe(false)}
+            className="w-16 h-16 bg-white rounded-full items-center justify-center shadow-elevated border border-gray-100 active:scale-90 transition-all"
+          >
+            <FontAwesome name="times" size={32} color="#EF4444" />
+          </Pressable>
+
+          {/* Super Like Button */}
+          <Pressable
+            onPress={() => handleSwipe(true, true)}
+            className="w-12 h-12 bg-white rounded-full items-center justify-center shadow-soft border border-gray-100 active:scale-90 transition-all -mt-8"
+          >
+            <FontAwesome name="star" size={20} color="#3B82F6" />
+          </Pressable>
+
+          {/* Like Button */}
+          <Pressable
+            onPress={() => handleSwipe(true)}
+            className="w-16 h-16 bg-white rounded-full items-center justify-center shadow-elevated border border-gray-100 active:scale-90 transition-all"
+          >
+            <FontAwesome name="heart" size={28} color="#22C55E" />
+          </Pressable>
+
         </View>
       </View>
       </View>

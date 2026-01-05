@@ -59,8 +59,30 @@ export default function CreateGroupPage() {
     try {
       // 1. Check if user exists, or create new user
       let userId = await getUserId();
+      let userExists = false;
 
-      if (!userId) {
+      if (userId) {
+        // Verify user actually exists in database (handle stale localStorage)
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('id')
+          .eq('id', userId)
+          .single();
+        
+        if (existingUser) {
+          userExists = true;
+          // Update existing user profile
+          await supabase
+            .from('users')
+            .update({ 
+               display_name: displayName.trim(),
+               dietary_tags: dietaryTags 
+            })
+            .eq('id', userId);
+        }
+      }
+
+      if (!userId || !userExists) {
         // Create new user
         const { data: newUser, error: userError } = await supabase
           .from('users')
@@ -77,7 +99,7 @@ export default function CreateGroupPage() {
         await setUserId(userId);
       }
 
-      // Save user preferences
+      // Save user preferences locally
       await setDisplayName(displayName.trim());
       await setDietaryTags(dietaryTags);
 
