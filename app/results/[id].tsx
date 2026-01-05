@@ -7,6 +7,14 @@ import { detectMatches, saveMatches, getMatches, MatchResult } from '../../lib/u
 import { getMockRestaurants } from '../../lib/api/mock-restaurants';
 import { ConfettiCelebration } from '../../components/animations/ConfettiCelebration';
 import { ResultsCardSkeleton } from '../../components/ui/LoadingSkeleton';
+import { supabase } from '../../lib/supabase';
+import { Avatar } from '../../components/ui/Avatar';
+
+type SwipeStatus = {
+  user_id: string;
+  swipe_count: number;
+  display_name: string;
+};
 
 export default function ResultsPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -17,7 +25,72 @@ export default function ResultsPage() {
   const [loading, setLoading] = useState(true);
   const [detecting, setDetecting] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [swipeStatus, setSwipeStatus] = useState<SwipeStatus[]>([]);
+  const [allMembersFinished, setAllMembersFinished] = useState(false);
 
+  // Track swipe progress for all members
+  useEffect(() => {
+    if (!id || members.length === 0) return;
+
+    const fetchSwipeStatus = async () => {
+      try {
+        // Get swipe counts for each member
+        const { data: swipes, error: swipeError } = await supabase
+          .from('swipes')
+          .select('user_id')
+          .eq('group_id', id);
+
+        if (swipeError) throw swipeError;
+
+        // Build status map
+        const statusMap: SwipeStatus[] = members.map((member) => {
+          const userSwipes = swipes?.filter((s) => s.user_id === member.user_id) || [];
+          return {
+            user_id: member.user_id,
+            swipe_count: userSwipes.length,
+            display_name: member.user.display_name,
+          };
+        });
+
+        setSwipeStatus(statusMap);
+
+        // Check if all members have swiped at least once
+        const allSwiped = statusMap.every((status) => status.swipe_count > 0);
+
+        // If all members finished and we haven't checked yet, trigger match detection
+        if (allSwiped && !allMembersFinished) {
+          setAllMembersFinished(true);
+        }
+      } catch (err) {
+        console.error('Error fetching swipe status:', err);
+      }
+    };
+
+    fetchSwipeStatus();
+
+    // Subscribe to swipe changes for real-time updates
+    const subscription = supabase
+      .channel(`results-swipes-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'swipes',
+          filter: `group_id=eq.${id}`,
+        },
+        () => {
+          fetchSwipeStatus();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [id, members, allMembersFinished]);
+
+  // Load/detect matches when all members finish or on initial load
   useEffect(() => {
     if (!id || !group) return;
 
@@ -34,7 +107,16 @@ export default function ResultsPage() {
           return;
         }
 
-        // No existing matches, detect them
+        // Check if all members have finished swiping
+        const allFinished = swipeStatus.length > 0 && swipeStatus.every((s) => s.swipe_count > 0);
+
+        if (!allFinished) {
+          // Not everyone is done yet, keep waiting
+          setLoading(false);
+          return;
+        }
+
+        // No existing matches and everyone finished, detect them
         setDetecting(true);
         const allRestaurants = getMockRestaurants();
         const detectedMatches = await detectMatches(id, allRestaurants);
@@ -58,7 +140,7 @@ export default function ResultsPage() {
     };
 
     loadMatches();
-  }, [id, group]);
+  }, [id, group, allMembersFinished, swipeStatus]);
 
   const handleGetDirections = (restaurant: MatchResult['restaurant_data']) => {
     const address = restaurant.location.display_address.join(', ');
@@ -91,6 +173,83 @@ export default function ResultsPage() {
   }
 
   if (matches.length === 0) {
+    // Check if people are still swiping
+    const stillSwiping = swipeStatus.filter((s) => s.swipe_count === 0);
+    const finishedSwiping = swipeStatus.filter((s) => s.swipe_count > 0);
+
+    if (stillSwiping.length > 0) {
+      // Show waiting state with progress
+      return (
+        <ScrollView className="flex-1 bg-background">
+          <Toaster position="top-center" />
+          <View className="max-w-app mx-auto w-full px-4 py-8">
+            <View className="items-center mb-8">
+              <Text className="text-6xl mb-4">⏳</Text>
+              <Text className="text-2xl font-bold text-textDark mb-2 text-center">
+                Waiting for Everyone...
+              </Text>
+              <Text className="text-base text-gray-600 text-center">
+                Results will appear automatically when all members finish swiping
+              </Text>
+            </View>
+
+            {/* Progress Card */}
+            <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+              <Text className="text-lg font-bold text-textDark mb-3">
+                Swipe Progress
+              </Text>
+
+              {/* Finished Members */}
+              {finishedSwiping.length > 0 && (
+                <>
+                  <Text className="text-sm font-semibold text-success mb-2">
+                    ✅ Finished ({finishedSwiping.length})
+                  </Text>
+                  <View className="gap-2 mb-4">
+                    {finishedSwiping.map((status) => (
+                      <View key={status.user_id} className="flex-row items-center gap-2">
+                        <Avatar name={status.display_name} size="small" />
+                        <Text className="text-sm text-gray-700">{status.display_name}</Text>
+                        <Text className="text-xs text-gray-500">
+                          ({status.swipe_count} swipes)
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </>
+              )}
+
+              {/* Still Swiping Members */}
+              <Text className="text-sm font-semibold text-orange-600 mb-2">
+                ⏳ Still Swiping ({stillSwiping.length})
+              </Text>
+              <View className="gap-2">
+                {stillSwiping.map((status) => (
+                  <View key={status.user_id} className="flex-row items-center gap-2">
+                    <Avatar name={status.display_name} size="small" />
+                    <Text className="text-sm text-gray-700">{status.display_name}</Text>
+                    <ActivityIndicator size="small" color="#E53935" />
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Info Box */}
+            <View className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <Text className="text-sm text-blue-900 font-semibold mb-2">
+                💡 Tip
+              </Text>
+              <Text className="text-sm text-blue-800">
+                This page will automatically refresh when everyone finishes swiping.
+                No need to manually reload!
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+      );
+    }
+
+    // Everyone finished but no matches
     return (
       <View className="flex-1 bg-background items-center justify-center px-4">
         <Toaster position="top-center" />
