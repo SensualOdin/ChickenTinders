@@ -58,14 +58,19 @@ export default function ResultsPage() {
         const allSwiped = statusMap.every((status) => status.swipe_count > 0);
         console.log('Swipe status check:', {
           allSwiped,
-          currentAllMembersFinished: allMembersFinished,
           statusMap
         });
 
-        // If all members finished, trigger match detection
-        if (allSwiped && !allMembersFinished) {
-          console.log('Setting allMembersFinished to true');
-          setAllMembersFinished(true);
+        // If all members finished, trigger match detection using callback to avoid stale closure
+        if (allSwiped) {
+          setAllMembersFinished((prev) => {
+            console.log('Checking allMembersFinished:', { prev, allSwiped });
+            if (!prev) {
+              console.log('Setting allMembersFinished to true');
+              return true;
+            }
+            return prev;
+          });
         }
       } catch (err) {
         console.error('Error fetching swipe status:', err);
