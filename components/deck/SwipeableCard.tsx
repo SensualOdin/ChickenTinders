@@ -138,7 +138,8 @@ export function SwipeableCard({
         style={[animatedStyle]}
         className="absolute w-full h-full"
       >
-        <View className="w-full h-full bg-white rounded-3xl overflow-hidden shadow-xl">
+        <View className="w-full h-full bg-white rounded-3xl shadow-xl" style={{ overflow: 'visible' }}>
+          <View className="w-full h-full bg-white rounded-3xl overflow-hidden"  style={{ maxHeight: '100%' }}>
           {/* Like Overlay */}
           <Animated.View
             style={[likeOverlayStyle]}
@@ -167,80 +168,81 @@ export function SwipeableCard({
           {restaurant.image_url ? (
             <Image
               source={{ uri: restaurant.image_url }}
-              className="w-full h-96"
+              className="w-full h-72"
               resizeMode="cover"
             />
           ) : (
-            <View className="w-full h-96 bg-gray-200 items-center justify-center">
+            <View className="w-full h-72 bg-gray-200 items-center justify-center">
               <Text className="text-6xl">🍽️</Text>
             </View>
           )}
 
           {/* Restaurant Info */}
-          <View className="p-6">
-            <Text className="text-3xl font-bold text-textDark mb-2">
+          <View className="p-4">
+            <Text className="text-2xl font-bold text-textDark mb-2">
               {restaurant.name}
             </Text>
 
-            <View className="flex-row items-center gap-2 mb-3">
-              <Text className="text-lg text-gray-700">{cuisine}</Text>
-              <Text className="text-lg text-gray-400">•</Text>
-              <Text className="text-lg font-semibold text-primary">{price}</Text>
+            <View className="flex-row items-center gap-2 mb-2">
+              <Text className="text-base text-gray-700">{cuisine}</Text>
+              <Text className="text-base text-gray-400">•</Text>
+              <Text className="text-base font-semibold text-primary">{price}</Text>
             </View>
 
-            <View className="flex-row items-center gap-4 mb-4">
+            <View className="flex-row items-center gap-4 mb-3">
               <View className="flex-row items-center gap-1">
-                <Text className="text-xl">⭐</Text>
-                <Text className="text-base font-semibold text-gray-700">
+                <Text className="text-lg">⭐</Text>
+                <Text className="text-sm font-semibold text-gray-700">
                   {restaurant.rating}
                 </Text>
               </View>
               <View className="flex-row items-center gap-1">
-                <Text className="text-xl">📍</Text>
-                <Text className="text-base text-gray-700">
+                <Text className="text-lg">📍</Text>
+                <Text className="text-sm text-gray-700">
                   {distanceInMiles} mi
                 </Text>
               </View>
             </View>
 
-            <Text className="text-sm text-gray-600 mb-6">
+            <Text className="text-xs text-gray-600 mb-4">
               {restaurant.location.display_address.join(', ')}
             </Text>
 
             {/* Action Buttons (Fallback for desktop/accessibility) */}
             {isActive && (
-              <View className="flex-row justify-between gap-4">
+              <View className="flex-row justify-between gap-3">
                 <Pressable
                   onPress={onDislike}
-                  className="flex-1 bg-gray-200 py-4 rounded-xl items-center active:scale-95"
+                  className="flex-1 bg-gray-200 py-3 rounded-xl items-center active:scale-95"
                 >
-                  <Text className="text-3xl">✗</Text>
-                  <Text className="text-sm font-semibold text-gray-700 mt-1">
+                  <Text className="text-2xl">✗</Text>
+                  <Text className="text-xs font-semibold text-gray-700 mt-1">
                     Nope
                   </Text>
                 </Pressable>
 
                 <Pressable
                   onPress={onSuperLike}
-                  className="flex-1 bg-secondary py-4 rounded-xl items-center active:scale-95"
+                  className="flex-1 bg-secondary py-3 rounded-xl items-center active:scale-95"
                 >
-                  <Text className="text-3xl">⭐</Text>
-                  <Text className="text-sm font-semibold text-white mt-1">
-                    Super Like
+                  <Text className="text-2xl">⭐</Text>
+                  <Text className="text-xs font-semibold text-white mt-1">
+                    Super
                   </Text>
                 </Pressable>
 
                 <Pressable
                   onPress={onLike}
-                  className="flex-1 bg-success py-4 rounded-xl items-center active:scale-95"
+                  className="flex-1 bg-success py-3 rounded-xl items-center active:scale-95"
                 >
-                  <Text className="text-3xl">♥</Text>
-                  <Text className="text-sm font-semibold text-white mt-1">
+                  <Text className="text-2xl">♥</Text>
+                  <Text className="text-xs font-semibold text-white mt-1">
                     Like
                   </Text>
                 </Pressable>
               </View>
             )}
+          </View>
           </View>
         </View>
       </Animated.View>

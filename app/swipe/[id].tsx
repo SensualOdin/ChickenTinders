@@ -237,8 +237,8 @@ export default function SwipePage() {
       </View>
 
       {/* Card Stack Container */}
-      <View className="flex-1 items-center justify-center">
-        <View className="w-full max-w-app px-4 h-[600px] relative">
+      <View className="flex-1 items-center py-4">
+        <View className="w-full max-w-app px-4 flex-1 relative" style={{ maxHeight: 750 }}>
           {/* Show next 3 cards in stack */}
           {restaurants.slice(currentIndex, currentIndex + 3).map((restaurant, index) => (
             <View
