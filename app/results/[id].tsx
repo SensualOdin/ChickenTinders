@@ -56,9 +56,15 @@ export default function ResultsPage() {
 
         // Check if all members have swiped at least once
         const allSwiped = statusMap.every((status) => status.swipe_count > 0);
+        console.log('Swipe status check:', {
+          allSwiped,
+          currentAllMembersFinished: allMembersFinished,
+          statusMap
+        });
 
-        // If all members finished and we haven't checked yet, trigger match detection
+        // If all members finished, trigger match detection
         if (allSwiped && !allMembersFinished) {
+          console.log('Setting allMembersFinished to true');
           setAllMembersFinished(true);
         }
       } catch (err) {
@@ -80,6 +86,7 @@ export default function ResultsPage() {
           filter: `group_id=eq.${id}`,
         },
         () => {
+          console.log('Swipe change detected, refetching status...');
           fetchSwipeStatus();
         }
       )
@@ -88,7 +95,7 @@ export default function ResultsPage() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [id, members, allMembersFinished]);
+  }, [id, members]);
 
   // Load/detect matches when all members finish
   useEffect(() => {
