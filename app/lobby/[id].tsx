@@ -15,6 +15,7 @@ export default function LobbyPage() {
   const [joining, setJoining] = useState(false);
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [tempName, setTempName] = useState('');
+  const [swipeProgress, setSwipeProgress] = useState<Record<string, number>>({});
 
   // Check if current user is in the group, if not prompt to join
   useEffect(() => {
@@ -44,6 +45,57 @@ export default function LobbyPage() {
 
     checkMembership();
   }, [group, members, loading]);
+
+  // Fetch swipe progress for all members
+  useEffect(() => {
+    if (!id || members.length === 0) return;
+
+    const fetchSwipeProgress = async () => {
+      try {
+        // Get swipe counts for each member
+        const { data: swipes, error: swipeError } = await supabase
+          .from('swipes')
+          .select('user_id')
+          .eq('group_id', id);
+
+        if (swipeError) throw swipeError;
+
+        // Count swipes per user
+        const progressMap: Record<string, number> = {};
+        members.forEach((member) => {
+          const userSwipes = swipes?.filter((s) => s.user_id === member.user_id) || [];
+          progressMap[member.user_id] = userSwipes.length;
+        });
+
+        setSwipeProgress(progressMap);
+      } catch (err) {
+        console.error('Error fetching swipe progress:', err);
+      }
+    };
+
+    fetchSwipeProgress();
+
+    // Subscribe to swipe changes
+    const subscription = supabase
+      .channel(`swipes-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'swipes',
+          filter: `group_id=eq.${id}`,
+        },
+        () => {
+          fetchSwipeProgress();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [id, members]);
 
   const joinGroup = async (userId: string) => {
     if (!id || joining) return;
@@ -115,6 +167,17 @@ export default function LobbyPage() {
       vibrate();
     } else {
       toast.error('Failed to copy link');
+    }
+  };
+
+  const handleCopyCode = async () => {
+    const success = await copyToClipboard(id || '');
+
+    if (success) {
+      toast.success('Code copied! 🎉');
+      vibrate();
+    } else {
+      toast.error('Failed to copy code');
     }
   };
 
@@ -196,8 +259,16 @@ export default function LobbyPage() {
         {/* Header */}
         <View className="items-center mb-6">
           <Text className="text-6xl mb-4">🍗</Text>
-          <Text className="text-3xl font-bold text-primary mb-1">Lobby: {id}</Text>
-          <Text className="text-base text-gray-600">Waiting for friends...</Text>
+          <Text className="text-lg text-gray-600 mb-2">Group Code</Text>
+          <Pressable
+            onPress={handleCopyCode}
+            className="bg-white px-6 py-3 rounded-xl border-2 border-primary active:scale-95 mb-2"
+          >
+            <Text className="text-3xl font-bold font-mono text-primary tracking-wider">
+              {id}
+            </Text>
+          </Pressable>
+          <Text className="text-sm text-gray-500">Tap code to copy</Text>
         </View>
 
         {/* Group Settings */}
@@ -230,29 +301,47 @@ export default function LobbyPage() {
             )}
           </View>
           <View className="gap-3">
-            {members.map((member) => (
-              <View key={member.id} className="flex-row items-center gap-3">
-                <Avatar name={member.user.display_name} size="medium" />
-                <View className="flex-1">
-                  <Text className="text-base font-semibold text-textDark">
-                    {member.user.display_name}
-                  </Text>
-                  <Text className="text-sm text-gray-500">
-                    Joined {new Date(member.joined_at).toLocaleTimeString()}
-                  </Text>
+            {members.map((member) => {
+              const swipeCount = swipeProgress[member.user_id] || 0;
+              const isSwiping = swipeCount > 0;
+
+              return (
+                <View key={member.id} className="flex-row items-center gap-3">
+                  <Avatar name={member.user.display_name} size="medium" />
+                  <View className="flex-1">
+                    <Text className="text-base font-semibold text-textDark">
+                      {member.user.display_name}
+                    </Text>
+                    <Text className="text-sm text-gray-500">
+                      {isSwiping ? `${swipeCount} swipes` : 'Waiting to start...'}
+                    </Text>
+                  </View>
+                  {isSwiping && (
+                    <View className="bg-success px-2 py-1 rounded-lg">
+                      <Text className="text-white text-xs font-semibold">Swiping</Text>
+                    </View>
+                  )}
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         </View>
 
-        {/* Copy Link Button */}
-        <Pressable
-          onPress={handleCopyLink}
-          className="bg-secondary py-4 rounded-xl items-center active:scale-95 mb-3"
-        >
-          <Text className="text-white text-lg font-bold">📋 Copy Invite Link</Text>
-        </Pressable>
+        {/* Invite Friends Section */}
+        <View className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-4">
+          <Text className="text-base font-bold text-blue-900 mb-2">
+            📤 Invite Friends
+          </Text>
+          <Text className="text-sm text-blue-800 mb-3">
+            Share the code <Text className="font-mono font-bold">{id}</Text> or send the link
+          </Text>
+          <Pressable
+            onPress={handleCopyLink}
+            className="bg-secondary py-3 rounded-xl items-center active:scale-95"
+          >
+            <Text className="text-white text-base font-bold">Copy Invite Link</Text>
+          </Pressable>
+        </View>
 
         {/* Start Swiping Button */}
         <Pressable
