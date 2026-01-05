@@ -2,7 +2,7 @@
 
 Last Updated: January 5, 2026
 
-## 🎯 Current Phase: **Phase 5 Complete** ✅
+## 🎯 Current Phase: **Authentication & Real-time Enhancements** ✅
 
 ---
 
@@ -157,9 +157,66 @@ Last Updated: January 5, 2026
 
 ---
 
+### Phase 6: Authentication System ✅
+**Status:** Complete
+
+**What's Built:**
+- [x] Dual-mode authentication (Guest + Authenticated)
+- [x] Email/password signup and login
+- [x] Guest account linking (preserve data when signing up)
+- [x] AuthContext with React Context API
+- [x] Account management page
+- [x] Group history page (authenticated users only)
+- [x] Join group page (by code)
+- [x] Database migration for auth support
+- [x] RLS policies for authenticated users
+- [x] Auto-create user profiles on signup
+
+**Files:**
+- `lib/contexts/AuthContext.tsx` - Auth state management
+- `app/auth/login.tsx` - Sign in page
+- `app/auth/signup.tsx` - Create account page
+- `app/account.tsx` - Account management
+- `app/history.tsx` - Group history
+- `app/join.tsx` - Join by code
+- `supabase-auth-migration.sql` - Database changes
+
+**Documentation:**
+- See [AUTH-SETUP.md](AUTH-SETUP.md) for setup instructions
+
+---
+
+### Phase 7: Real-time Swipe Progress ✅
+**Status:** Complete
+
+**What's Built:**
+- [x] Real-time swipe progress tracking
+- [x] "Waiting for Everyone" state with progress display
+- [x] Auto-refresh when all members finish swiping
+- [x] Member swipe counts with avatars
+- [x] Polling fallback (2-second intervals)
+- [x] Real-time subscription support
+- [x] Automatic match detection when ready
+
+**Files:**
+- `app/results/[id].tsx` - Enhanced results page
+
+**How It Works:**
+- User 1 finishes swiping → sees "Waiting for Everyone..." screen
+- Shows who's finished and who's still swiping
+- When all members finish → auto-detects matches
+- Polling checks every 2 seconds (fallback)
+- Real-time subscription for instant updates (if enabled)
+
+**Setup:**
+- See [REALTIME-SETUP.md](REALTIME-SETUP.md) to enable instant updates
+- App works perfectly with polling alone (no setup required)
+
+---
+
 ## 🔲 Upcoming Phases
 
-### Phase 6: Social Sharing & Polish (NEXT)
+### Phase 8: Social Sharing & Polish (NEXT)
 **Status:** Not started
 
 **What to Build:**
@@ -174,7 +231,7 @@ Last Updated: January 5, 2026
 
 ---
 
-### Phase 7: Legal, SEO & Analytics
+### Phase 9: Legal, SEO & Analytics
 **Status:** Not started
 
 **What to Build:**
@@ -206,10 +263,12 @@ cp .env.local.example .env.local
 ### 3. Supabase Setup
 1. Create Supabase project: https://supabase.com
 2. Run `supabase-schema.sql` in SQL Editor
-3. Enable Realtime for `group_members` table
-4. Add credentials to `.env.local`
+3. Run `supabase-auth-migration.sql` in SQL Editor (for auth support)
+4. Enable Realtime for `group_members` and `swipes` tables (optional)
+5. Enable Email authentication provider
+6. Add credentials to `.env.local`
 
-See [SUPABASE-SETUP.md](SUPABASE-SETUP.md) for detailed instructions.
+See [SUPABASE-SETUP.md](SUPABASE-SETUP.md) and [AUTH-SETUP.md](AUTH-SETUP.md) for detailed instructions.
 
 ### 4. Run Development Server
 ```bash
@@ -259,7 +318,12 @@ Open http://localhost:8081
 
 ## 🐛 Known Issues
 
-None currently! Everything in Phases 1-3 is working.
+None! All features working:
+- ✅ Authentication (guest + authenticated)
+- ✅ Real-time lobby updates
+- ✅ Real-time swipe progress with polling fallback
+- ✅ Match detection
+- ✅ Group history
 
 ---
 
@@ -275,11 +339,11 @@ None currently! Everything in Phases 1-3 is working.
 
 ## 🎯 Next Session Goals
 
-1. **Add social sharing** (Instagram, Twitter, WhatsApp)
-2. **Accessibility improvements** (ARIA, keyboard nav)
-3. **Create Supabase Edge Function** for Yelp proxy (remove CORS workaround)
-4. **Test cross-browser** (Safari, Chrome, Firefox)
-5. **Performance optimization** (image optimization, bundle splitting)
+1. **Optimize Realtime** (enable `swipes` table for instant updates)
+2. **Add social sharing** (Instagram, Twitter, WhatsApp)
+3. **Accessibility improvements** (ARIA, keyboard nav)
+4. **Create Supabase Edge Function** for Yelp proxy (remove CORS workaround)
+5. **Test cross-browser** (Safari, Chrome, Firefox)
 
 ---
 
@@ -289,8 +353,10 @@ None currently! Everything in Phases 1-3 is working.
 - PWA-ready with manifest
 - Mobile-first responsive design
 - Real-time updates working perfectly
-- Guest authentication (no signup!)
+- Dual-mode authentication (guest + authenticated)
+- Group history saved for authenticated users
 - Shareable links working
+- Auto-refresh with polling fallback (2-second intervals)
 
 ---
 
