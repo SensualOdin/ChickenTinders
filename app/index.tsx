@@ -25,14 +25,24 @@ export default function LandingPage() {
             No more group chat chaos. Swipe, match, eat.
           </Text>
 
-          {/* CTA Button */}
-          <Link href="/create" asChild>
-            <Pressable className="bg-primary px-8 py-4 rounded-xl active:scale-95 transition-transform">
-              <Text className="text-white text-lg font-bold">
-                Create Group
-              </Text>
-            </Pressable>
-          </Link>
+          {/* CTA Buttons */}
+          <View className="flex-row gap-4">
+            <Link href="/create" asChild>
+              <Pressable className="bg-primary px-8 py-4 rounded-xl active:scale-95 transition-transform">
+                <Text className="text-white text-lg font-bold">
+                  Create Group
+                </Text>
+              </Pressable>
+            </Link>
+
+            <Link href="/join" asChild>
+              <Pressable className="bg-secondary px-8 py-4 rounded-xl active:scale-95 transition-transform">
+                <Text className="text-white text-lg font-bold">
+                  Join Group
+                </Text>
+              </Pressable>
+            </Link>
+          </View>
 
           {/* Trust Signal */}
           <Text className="text-sm text-gray-500 mt-6">
