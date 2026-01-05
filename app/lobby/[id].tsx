@@ -32,6 +32,20 @@ export default function LobbyPage() {
         return;
       }
 
+      // Verify user exists in database
+      const { data: userExists } = await supabase
+        .from('users')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+      if (!userExists) {
+        // User ID in storage but not in DB, treat as new user
+        console.log('User ID in storage but not in DB, showing name prompt');
+        setShowNamePrompt(true);
+        return;
+      }
+
       // Check if user is already a member
       const isMember = members.some((m) => m.user_id === userId);
       console.log('Is member?', isMember);
