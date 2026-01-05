@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import toast, { Toaster } from 'react-hot-toast';
 import { useGroup } from '../../lib/hooks/useGroup';
 import { SwipeableCard } from '../../components/deck/SwipeableCard';
@@ -128,8 +129,9 @@ export default function SwipePage() {
 
   if (groupLoading || loading) {
     return (
-      <View className="flex-1 bg-background">
-        <Toaster position="top-center" />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View className="flex-1 bg-background">
+          <Toaster position="top-center" />
 
         {/* Header */}
         <View className="bg-white px-4 py-3 shadow-sm z-20">
@@ -162,13 +164,15 @@ export default function SwipePage() {
             </Text>
           </View>
         </View>
-      </View>
+        </View>
+      </GestureHandlerRootView>
     );
   }
 
   if (error) {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-4">
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View className="flex-1 bg-background items-center justify-center px-4">
         <Text className="text-6xl mb-4">😕</Text>
         <Text className="text-2xl font-bold text-textDark mb-2 text-center">
           No Restaurants Found
@@ -182,13 +186,15 @@ export default function SwipePage() {
         >
           <Text className="text-white font-semibold">Go Back</Text>
         </Pressable>
-      </View>
+        </View>
+      </GestureHandlerRootView>
     );
   }
 
   if (currentIndex >= restaurants.length) {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-4">
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View className="flex-1 bg-background items-center justify-center px-4">
         <Text className="text-6xl mb-4">✅</Text>
         <Text className="text-2xl font-bold text-textDark mb-2">
           All Done!
@@ -197,15 +203,17 @@ export default function SwipePage() {
           Checking for matches...
         </Text>
         <ActivityIndicator size="large" color="#E53935" />
-      </View>
+        </View>
+      </GestureHandlerRootView>
     );
   }
 
   const progress = ((currentIndex + 1) / restaurants.length) * 100;
 
   return (
-    <View className="flex-1 bg-background">
-      <Toaster position="top-center" />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View className="flex-1 bg-background">
+        <Toaster position="top-center" />
 
       {/* Header */}
       <View className="bg-white px-4 py-3 shadow-sm z-20">
@@ -267,6 +275,7 @@ export default function SwipePage() {
           </Text>
         </View>
       </View>
-    </View>
+      </View>
+    </GestureHandlerRootView>
   );
 }

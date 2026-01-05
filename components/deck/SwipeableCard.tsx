@@ -3,14 +3,13 @@ import { View, Text, Image, Pressable } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  useAnimatedGestureHandler,
   withSpring,
   withTiming,
   interpolate,
   runOnJS,
   Extrapolation,
 } from 'react-native-reanimated';
-import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { YelpBusiness } from '../../lib/api/yelp';
 
 type SwipeableCardProps = {
@@ -24,11 +23,6 @@ type SwipeableCardProps = {
 const SWIPE_THRESHOLD = 120;
 const ROTATION_ANGLE = 30;
 
-type ContextType = {
-  startX: number;
-  startY: number;
-};
-
 export function SwipeableCard({
   restaurant,
   onLike,
@@ -40,6 +34,8 @@ export function SwipeableCard({
   const translateY = useSharedValue(0);
   const scale = useSharedValue(isActive ? 1 : 0.95);
   const opacity = useSharedValue(isActive ? 1 : 0.8);
+  const startX = useSharedValue(0);
+  const startY = useSharedValue(0);
 
   // Animate when card becomes active
   useEffect(() => {
@@ -47,16 +43,17 @@ export function SwipeableCard({
     opacity.value = withTiming(isActive ? 1 : 0.8);
   }, [isActive]);
 
-  const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, ContextType>({
-    onStart: (_, context) => {
-      context.startX = translateX.value;
-      context.startY = translateY.value;
-    },
-    onActive: (event, context) => {
-      translateX.value = context.startX + event.translationX;
-      translateY.value = context.startY + event.translationY;
-    },
-    onEnd: (event) => {
+  const panGesture = Gesture.Pan()
+    .enabled(isActive)
+    .onStart(() => {
+      startX.value = translateX.value;
+      startY.value = translateY.value;
+    })
+    .onUpdate((event) => {
+      translateX.value = startX.value + event.translationX;
+      translateY.value = startY.value + event.translationY;
+    })
+    .onEnd(() => {
       const swipeRight = translateX.value > SWIPE_THRESHOLD;
       const swipeLeft = translateX.value < -SWIPE_THRESHOLD;
       const swipeUp = translateY.value < -SWIPE_THRESHOLD;
@@ -79,8 +76,7 @@ export function SwipeableCard({
         translateX.value = withSpring(0, { damping: 15 });
         translateY.value = withSpring(0, { damping: 15 });
       }
-    },
-  });
+    });
 
   const animatedStyle = useAnimatedStyle(() => {
     const rotate = interpolate(
@@ -137,7 +133,7 @@ export function SwipeableCard({
   const price = restaurant.price || '$$';
 
   return (
-    <PanGestureHandler onGestureEvent={gestureHandler} enabled={isActive}>
+    <GestureDetector gesture={panGesture}>
       <Animated.View
         style={[animatedStyle]}
         className="absolute w-full h-full"
@@ -248,6 +244,6 @@ export function SwipeableCard({
           </View>
         </View>
       </Animated.View>
-    </PanGestureHandler>
+    </GestureDetector>
   );
 }
