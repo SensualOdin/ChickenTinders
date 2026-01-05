@@ -32,6 +32,8 @@ export default function ResultsPage() {
   useEffect(() => {
     if (!id || members.length === 0) return;
 
+    let pollInterval: NodeJS.Timeout;
+
     const fetchSwipeStatus = async () => {
       try {
         // Get swipe counts for each member
@@ -79,6 +81,12 @@ export default function ResultsPage() {
 
     fetchSwipeStatus();
 
+    // Set up polling as fallback (check every 2 seconds)
+    pollInterval = setInterval(() => {
+      console.log('Polling for swipe updates...');
+      fetchSwipeStatus();
+    }, 2000);
+
     // Subscribe to swipe changes for real-time updates
     const subscription = supabase
       .channel(`results-swipes-${id}`)
@@ -103,7 +111,8 @@ export default function ResultsPage() {
       });
 
     return () => {
-      console.log('Unsubscribing from swipes');
+      console.log('Cleaning up: unsubscribing and stopping polling');
+      clearInterval(pollInterval);
       subscription.unsubscribe();
     };
   }, [id, members]);
