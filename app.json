@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "ChickenTinders",
+    "slug": "chickentinders",
+    "version": "1.0.0",
+    "scheme": "chickentinders",
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "platforms": ["web"],
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#FAFAFA",
+    "primaryColor": "#E53935"
+  }
+}
