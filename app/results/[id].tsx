@@ -27,15 +27,26 @@ export default function ResultsPage() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [swipeStatus, setSwipeStatus] = useState<SwipeStatus[]>([]);
   const [allMembersFinished, setAllMembersFinished] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   // Track swipe progress for all members
   useEffect(() => {
     if (!id || members.length === 0) return;
 
+    // Stop polling if matches are already loaded
+    if (matches.length > 0) {
+      console.log('Matches already loaded, skipping polling setup');
+      return;
+    }
+
     let pollInterval: NodeJS.Timeout;
+    let subscription: any;
 
     const fetchSwipeStatus = async () => {
       try {
+        // Get the total number of restaurants to swipe through
+        const totalRestaurants = getMockRestaurants().length;
+
         // Get swipe counts for each member
         const { data: swipes, error: swipeError } = await supabase
           .from('swipes')
@@ -56,17 +67,21 @@ export default function ResultsPage() {
 
         setSwipeStatus(statusMap);
 
-        // Check if all members have swiped at least once
-        const allSwiped = statusMap.every((status) => status.swipe_count > 0);
+        // Mark initial load as complete so we can show the waiting room
+        setInitialLoadComplete(true);
+
+        // Check if all members have finished swiping (swiped on ALL restaurants)
+        const allFinished = statusMap.every((status) => status.swipe_count >= totalRestaurants);
         console.log('Swipe status check:', {
-          allSwiped,
+          allFinished,
+          totalRestaurants,
           statusMap
         });
 
         // If all members finished, trigger match detection using callback to avoid stale closure
-        if (allSwiped) {
+        if (allFinished) {
           setAllMembersFinished((prev) => {
-            console.log('Checking allMembersFinished:', { prev, allSwiped });
+            console.log('Checking allMembersFinished:', { prev, allFinished });
             if (!prev) {
               console.log('Setting allMembersFinished to true');
               return true;
@@ -88,7 +103,7 @@ export default function ResultsPage() {
     }, 2000);
 
     // Subscribe to swipe changes for real-time updates
-    const subscription = supabase
+    subscription = supabase
       .channel(`results-swipes-${id}`)
       .on(
         'postgres_changes',
@@ -112,10 +127,10 @@ export default function ResultsPage() {
 
     return () => {
       console.log('Cleaning up: unsubscribing and stopping polling');
-      clearInterval(pollInterval);
-      subscription.unsubscribe();
+      if (pollInterval) clearInterval(pollInterval);
+      if (subscription) subscription.unsubscribe();
     };
-  }, [id, members]);
+  }, [id, members, matches.length]);
 
   // Load/detect matches when all members finish
   useEffect(() => {
@@ -180,7 +195,8 @@ export default function ResultsPage() {
     }
   };
 
-  if (loading) {
+  // Show loading only if we haven't loaded initial status yet or if we're detecting matches
+  if (!initialLoadComplete || (loading && allMembersFinished)) {
     return (
       <ScrollView className="flex-1 bg-background">
         <Toaster position="top-center" />
@@ -200,8 +216,9 @@ export default function ResultsPage() {
 
   if (matches.length === 0) {
     // Check if people are still swiping
-    const stillSwiping = swipeStatus.filter((s) => s.swipe_count === 0);
-    const finishedSwiping = swipeStatus.filter((s) => s.swipe_count > 0);
+    const totalRestaurants = getMockRestaurants().length;
+    const stillSwiping = swipeStatus.filter((s) => s.swipe_count < totalRestaurants);
+    const finishedSwiping = swipeStatus.filter((s) => s.swipe_count >= totalRestaurants);
 
     if (stillSwiping.length > 0) {
       // Show waiting state with progress
@@ -296,8 +313,8 @@ export default function ResultsPage() {
     );
   }
 
-  const topMatch = matches[0];
-  const runnerUps = matches.slice(1);
+  const unanimousMatches = matches.filter(m => m.is_unanimous);
+  const hasUnanimous = unanimousMatches.length > 0;
 
   return (
     <ScrollView className="flex-1 bg-background">
@@ -307,141 +324,87 @@ export default function ResultsPage() {
         {/* Celebration Header */}
         <View className="items-center mb-6">
           <Text className="text-6xl mb-4">🎉</Text>
-          {topMatch.is_unanimous ? (
-            <>
-              <Text className="text-3xl font-bold text-primary mb-2">
-                UNANIMOUS!
-              </Text>
-              <Text className="text-base text-gray-600">
-                Everyone super-liked this place! 🌟
-              </Text>
-            </>
-          ) : (
-            <>
-              <Text className="text-3xl font-bold text-primary mb-2">
-                It's a Match!
-              </Text>
-              <Text className="text-base text-gray-600">
-                {members.length} {members.length === 1 ? 'person' : 'people'} agreed
-              </Text>
-            </>
-          )}
+          <Text className="text-3xl font-bold text-primary mb-2">
+            {matches.length} {matches.length === 1 ? 'Match' : 'Matches'} Found!
+          </Text>
+          <Text className="text-base text-gray-600">
+            {members.length} {members.length === 1 ? 'person' : 'people'} agreed on {matches.length} {matches.length === 1 ? 'restaurant' : 'restaurants'}
+          </Text>
         </View>
 
-        {/* Winner Card */}
-        <View className="bg-white rounded-2xl overflow-hidden shadow-lg mb-6">
-          {topMatch.restaurant_data.image_url ? (
-            <Image
-              source={{ uri: topMatch.restaurant_data.image_url }}
-              className="w-full h-64"
-              resizeMode="cover"
-            />
-          ) : (
-            <View className="w-full h-64 bg-gray-200 items-center justify-center">
-              <Text className="text-6xl">🍽️</Text>
-            </View>
-          )}
-
-          <View className="p-6">
-            <Text className="text-3xl font-bold text-textDark mb-2">
-              {topMatch.restaurant_data.name}
-            </Text>
-
-            <View className="flex-row items-center gap-2 mb-4">
-              <Text className="text-lg text-gray-700">
-                {topMatch.restaurant_data.categories[0]?.title}
-              </Text>
-              <Text className="text-lg text-gray-400">•</Text>
-              <Text className="text-lg font-semibold text-primary">
-                {topMatch.restaurant_data.price || '$$'}
-              </Text>
-            </View>
-
-            <View className="flex-row items-center gap-4 mb-4">
-              <View className="flex-row items-center gap-1">
-                <Text className="text-xl">⭐</Text>
-                <Text className="text-base font-semibold text-gray-700">
-                  {topMatch.restaurant_data.rating}
-                </Text>
+        {/* All Matches */}
+        {matches.map((match, index) => (
+          <View
+            key={match.restaurant_id}
+            className="bg-white rounded-2xl overflow-hidden shadow-lg mb-4"
+          >
+            {/* Badge for unanimous matches */}
+            {match.is_unanimous && (
+              <View className="absolute top-4 right-4 bg-yellow-500 px-3 py-1 rounded-full z-10">
+                <Text className="text-white text-xs font-bold">⭐ UNANIMOUS</Text>
               </View>
-              <View className="flex-row items-center gap-1">
-                <Text className="text-xl">📍</Text>
+            )}
+
+            {/* Restaurant Image */}
+            {match.restaurant_data.image_url ? (
+              <Image
+                source={{ uri: match.restaurant_data.image_url }}
+                className="w-full h-48"
+                resizeMode="cover"
+              />
+            ) : (
+              <View className="w-full h-48 bg-gray-200 items-center justify-center">
+                <Text className="text-6xl">🍽️</Text>
+              </View>
+            )}
+
+            {/* Restaurant Details */}
+            <View className="p-5">
+              <Text className="text-2xl font-bold text-textDark mb-2">
+                {match.restaurant_data.name}
+              </Text>
+
+              <View className="flex-row items-center gap-2 mb-3">
                 <Text className="text-base text-gray-700">
-                  {(topMatch.restaurant_data.distance / 1609.34).toFixed(1)} mi
+                  {match.restaurant_data.categories[0]?.title}
+                </Text>
+                <Text className="text-base text-gray-400">•</Text>
+                <Text className="text-base font-semibold text-primary">
+                  {match.restaurant_data.price || '$$'}
                 </Text>
               </View>
-            </View>
 
-            <Text className="text-sm text-gray-600 mb-6">
-              {topMatch.restaurant_data.location.display_address.join(', ')}
-            </Text>
-
-            {/* Get Directions Button */}
-            <Pressable
-              onPress={() => handleGetDirections(topMatch.restaurant_data)}
-              className="bg-success py-4 rounded-xl items-center active:scale-95"
-            >
-              <Text className="text-white text-lg font-bold">
-                🗺️ Get Directions
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Runner-ups */}
-        {runnerUps.length > 0 && (
-          <>
-            <Text className="text-xl font-bold text-textDark mb-3">
-              Also Great Options:
-            </Text>
-            {runnerUps.map((match, index) => (
-              <View
-                key={match.restaurant_id}
-                className="bg-white rounded-xl p-4 mb-3 shadow-sm"
-              >
-                <View className="flex-row gap-3">
-                  {match.restaurant_data.image_url ? (
-                    <Image
-                      source={{ uri: match.restaurant_data.image_url }}
-                      className="w-20 h-20 rounded-lg"
-                      resizeMode="cover"
-                    />
-                  ) : (
-                    <View className="w-20 h-20 rounded-lg bg-gray-200 items-center justify-center">
-                      <Text className="text-2xl">🍽️</Text>
-                    </View>
-                  )}
-
-                  <View className="flex-1">
-                    <Text className="text-lg font-bold text-textDark mb-1">
-                      {match.restaurant_data.name}
-                    </Text>
-                    <View className="flex-row items-center gap-2">
-                      <Text className="text-sm text-gray-600">
-                        {match.restaurant_data.categories[0]?.title}
-                      </Text>
-                      <Text className="text-sm text-gray-400">•</Text>
-                      <Text className="text-sm font-semibold text-primary">
-                        {match.restaurant_data.price || '$$'}
-                      </Text>
-                      <Text className="text-sm text-gray-400">•</Text>
-                      <Text className="text-sm text-gray-600">
-                        ⭐ {match.restaurant_data.rating}
-                      </Text>
-                    </View>
-                  </View>
+              <View className="flex-row items-center gap-4 mb-3">
+                <View className="flex-row items-center gap-1">
+                  <Text className="text-lg">⭐</Text>
+                  <Text className="text-sm font-semibold text-gray-700">
+                    {match.restaurant_data.rating}
+                  </Text>
                 </View>
-
-                <Pressable
-                  onPress={() => handleGetDirections(match.restaurant_data)}
-                  className="mt-3 py-2 border-2 border-success rounded-lg items-center active:scale-95"
-                >
-                  <Text className="text-success font-semibold">Get Directions</Text>
-                </Pressable>
+                <View className="flex-row items-center gap-1">
+                  <Text className="text-lg">📍</Text>
+                  <Text className="text-sm text-gray-700">
+                    {(match.restaurant_data.distance / 1609.34).toFixed(1)} mi
+                  </Text>
+                </View>
               </View>
-            ))}
-          </>
-        )}
+
+              <Text className="text-sm text-gray-600 mb-4">
+                {match.restaurant_data.location.display_address.join(', ')}
+              </Text>
+
+              {/* Get Directions Button */}
+              <Pressable
+                onPress={() => handleGetDirections(match.restaurant_data)}
+                className="bg-success py-3 rounded-xl items-center active:scale-95"
+              >
+                <Text className="text-white text-base font-bold">
+                  🗺️ Get Directions
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        ))}
 
         {/* Create New Group */}
         <View className="mt-6 mb-4">

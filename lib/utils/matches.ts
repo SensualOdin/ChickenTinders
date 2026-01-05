@@ -103,18 +103,45 @@ export async function saveMatches(
   try {
     if (matches.length === 0) return;
 
-    const matchRecords = matches.map((match) => ({
+    const matchRecords = matches.map((match, index) => ({
       group_id: groupId,
       restaurant_id: match.restaurant_id,
       restaurant_data: match.restaurant_data,
       is_unanimous: match.is_unanimous,
+      sort_order: index, // Preserve the original sort order
     }));
 
+    // Use upsert to avoid conflicts when multiple users try to save at once
     const { error } = await supabase
       .from('matches')
-      .insert(matchRecords);
+      .upsert(matchRecords, {
+        onConflict: 'group_id,restaurant_id', // Unique constraint
+        ignoreDuplicates: false, // Update existing records
+      });
 
-    if (error) throw error;
+    if (error) {
+      // If sort_order column doesn't exist, try without it
+      if (error.message?.includes('sort_order') || error.code === '42703') {
+        console.warn('sort_order column not found, upserting without it...');
+        const matchRecordsWithoutSort = matches.map((match) => ({
+          group_id: groupId,
+          restaurant_id: match.restaurant_id,
+          restaurant_data: match.restaurant_data,
+          is_unanimous: match.is_unanimous,
+        }));
+
+        const { error: retryError } = await supabase
+          .from('matches')
+          .upsert(matchRecordsWithoutSort, {
+            onConflict: 'group_id,restaurant_id',
+            ignoreDuplicates: false,
+          });
+
+        if (retryError) throw retryError;
+      } else {
+        throw error;
+      }
+    }
 
     // Update group status to 'matched'
     await supabase
@@ -133,11 +160,25 @@ export async function saveMatches(
  */
 export async function getMatches(groupId: string): Promise<MatchResult[]> {
   try {
-    const { data: matches, error } = await supabase
+    // Try with sort_order first
+    let { data: matches, error } = await supabase
       .from('matches')
       .select('*')
       .eq('group_id', groupId)
-      .order('is_unanimous', { ascending: false });
+      .order('sort_order', { ascending: true }); // Use sort_order to preserve original ranking
+
+    // If sort_order doesn't exist, fallback to is_unanimous ordering
+    if (error && (error.message?.includes('sort_order') || error.code === '42703')) {
+      console.warn('sort_order column not found, falling back to is_unanimous ordering...');
+      const result = await supabase
+        .from('matches')
+        .select('*')
+        .eq('group_id', groupId)
+        .order('is_unanimous', { ascending: false });
+
+      matches = result.data;
+      error = result.error;
+    }
 
     if (error) throw error;
 

@@ -137,34 +137,38 @@ export default function CreateGroupPage() {
 
   return (
     <ScrollView className="flex-1 bg-background">
-      <View className="max-w-app mx-auto w-full px-4 py-6">
-        {/* Header */}
-        <View className="mb-6">
-          <Text className="text-3xl font-bold text-textDark mb-2">
+      <View className="max-w-app mx-auto w-full px-6 py-8">
+        {/* Header with refined typography */}
+        <View className="mb-8">
+          <Text
+            className="text-4xl font-bold text-textDark mb-3 tracking-tight"
+            style={{ fontFamily: 'Playfair Display' }}
+          >
             Create Group
           </Text>
-          <Text className="text-base text-gray-600">
+          <Text className="text-base text-textMuted leading-relaxed">
             Set your preferences and invite your friends
           </Text>
         </View>
 
         {/* Error Message */}
         {error && (
-          <View className="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-4">
-            <Text className="text-red-700 text-sm">{error}</Text>
+          <View className="bg-red-50 border-l-4 border-primary rounded-xl p-4 mb-6 shadow-soft">
+            <Text className="text-primary text-sm font-medium">{error}</Text>
           </View>
         )}
 
-        {/* Form */}
-        <View className="gap-6">
+        {/* Form with refined styling */}
+        <View className="gap-7">
           {/* Display Name */}
           <View>
-            <Text className="text-base font-semibold text-textDark mb-2">
+            <Text className="text-sm font-semibold text-textDark mb-3 tracking-wide uppercase">
               Your Name
             </Text>
             <TextInput
-              className="bg-white border-2 border-gray-200 rounded-xl px-4 py-3 text-base text-textDark"
+              className="bg-surface border border-accent-dark rounded-2xl px-5 py-4 text-base text-textDark shadow-soft"
               placeholder="Enter your name"
+              placeholderTextColor="#9B9490"
               value={displayName}
               onChangeText={setDisplayNameState}
               autoCapitalize="words"
@@ -174,21 +178,22 @@ export default function CreateGroupPage() {
 
           {/* Zip Code */}
           <View>
-            <Text className="text-base font-semibold text-textDark mb-2">
+            <Text className="text-sm font-semibold text-textDark mb-3 tracking-wide uppercase">
               Location
             </Text>
             <TextInput
-              className={`bg-white border-2 rounded-xl px-4 py-3 text-base text-textDark ${
-                zipError ? 'border-red-400' : 'border-gray-200'
+              className={`bg-surface border rounded-2xl px-5 py-4 text-base text-textDark shadow-soft ${
+                zipError ? 'border-primary' : 'border-accent-dark'
               }`}
               placeholder="Enter zip code (e.g., 10001)"
+              placeholderTextColor="#9B9490"
               value={zipCode}
               onChangeText={validateZipCode}
               keyboardType="numeric"
               maxLength={5}
             />
             {zipError && (
-              <Text className="text-red-500 text-sm mt-1">{zipError}</Text>
+              <Text className="text-primary text-sm mt-2 font-medium">{zipError}</Text>
             )}
           </View>
 
@@ -211,34 +216,34 @@ export default function CreateGroupPage() {
             onChange={setDietaryTagsState}
           />
 
-          {/* Create Button */}
+          {/* Create Button with premium styling */}
           <Pressable
             onPress={handleCreateGroup}
             disabled={loading}
-            className={`bg-primary py-4 rounded-xl items-center active:scale-95 transition-transform ${
-              loading ? 'opacity-50' : ''
+            className={`bg-primary py-5 rounded-2xl items-center active:scale-95 transition-all shadow-elevated mt-2 ${
+              loading ? 'opacity-60' : ''
             }`}
           >
             {loading ? (
-              <ActivityIndicator color="white" />
+              <ActivityIndicator color="#F8F6F1" />
             ) : (
-              <Text className="text-white text-lg font-bold">
+              <Text className="text-surface text-base font-semibold tracking-wide">
                 Create Group
               </Text>
             )}
           </Pressable>
 
-          {/* Cancel */}
+          {/* Cancel with refined style */}
           <Pressable
             onPress={() => router.back()}
-            className="py-3 items-center"
+            className="py-4 items-center"
           >
-            <Text className="text-gray-600 text-base">Cancel</Text>
+            <Text className="text-textLight text-base tracking-wide">Cancel</Text>
           </Pressable>
         </View>
 
         {/* Bottom Spacing */}
-        <View className="h-8" />
+        <View className="h-12" />
       </View>
     </ScrollView>
   );

@@ -39,7 +39,7 @@ export default function Root({ children }: PropsWithChildren) {
         <link rel="manifest" href="/site.webmanifest" />
 
         {/* Theme Color */}
-        <meta name="theme-color" content="#E53935" />
+        <meta name="theme-color" content="#8B2635" />
 
         {/* Disable pull-to-refresh */}
         <meta name="mobile-web-app-capable" content="yes" />
@@ -50,9 +50,9 @@ export default function Root({ children }: PropsWithChildren) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 
-        {/* Inter Font */}
+        {/* Custom Fonts - Playfair Display for headings, Inter for body */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
 
@@ -67,11 +67,18 @@ export default function Root({ children }: PropsWithChildren) {
 
 const responsiveBackground = `
 body {
-  background-color: #FAFAFA;
+  background-color: #F8F6F1;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #1F1A1E;
+    background-color: #2A2421;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 `;

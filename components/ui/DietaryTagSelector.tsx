@@ -25,10 +25,10 @@ export function DietaryTagSelector({ selectedTags, onChange }: DietaryTagSelecto
 
   return (
     <View className="w-full">
-      <Text className="text-base font-semibold text-textDark mb-1">
+      <Text className="text-sm font-semibold text-textDark mb-1 tracking-wide uppercase">
         Dietary Restrictions
       </Text>
-      <Text className="text-sm text-gray-500 mb-3">
+      <Text className="text-sm text-textMuted mb-4 leading-relaxed">
         We'll only show restaurants that accommodate everyone
       </Text>
       <View className="flex-row flex-wrap gap-2">
@@ -38,17 +38,17 @@ export function DietaryTagSelector({ selectedTags, onChange }: DietaryTagSelecto
             <Pressable
               key={option.id}
               onPress={() => toggleTag(option.id)}
-              className={`px-4 py-3 rounded-xl border-2 active:scale-95 transition-transform ${
+              className={`px-4 py-3 rounded-2xl border active:scale-95 transition-all shadow-soft ${
                 isSelected
-                  ? 'bg-success border-success'
-                  : 'bg-white border-gray-200'
+                  ? 'bg-success border-success shadow-elevated'
+                  : 'bg-surface border-accent-dark'
               }`}
             >
               <View className="flex-row items-center gap-2">
                 <Text className="text-base">{option.emoji}</Text>
                 <Text
-                  className={`text-sm font-medium ${
-                    isSelected ? 'text-white' : 'text-gray-700'
+                  className={`text-sm font-medium tracking-wide ${
+                    isSelected ? 'text-surface' : 'text-textDark'
                   }`}
                 >
                   {option.label}

@@ -14,11 +14,13 @@ type SliderProps = {
 export function Slider({ min, max, step = 1, value, onChange, label, suffix = '' }: SliderProps) {
   return (
     <View className="w-full">
-      <View className="flex-row justify-between mb-2">
-        <Text className="text-base font-semibold text-textDark">{label}</Text>
-        <Text className="text-base font-bold text-primary">
-          {value}{suffix}
-        </Text>
+      <View className="flex-row justify-between mb-3">
+        <Text className="text-sm font-semibold text-textDark tracking-wide uppercase">{label}</Text>
+        <View className="bg-secondary px-3 py-1 rounded-full">
+          <Text className="text-sm font-bold text-surface">
+            {value}{suffix}
+          </Text>
+        </View>
       </View>
       <input
         type="range"
@@ -27,11 +29,14 @@ export function Slider({ min, max, step = 1, value, onChange, label, suffix = ''
         step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
+        className="w-full h-2 bg-accent rounded-full appearance-none cursor-pointer accent-primary"
+        style={{
+          background: `linear-gradient(to right, #D4A574 0%, #D4A574 ${((value - min) / (max - min)) * 100}%, #E8DCC4 ${((value - min) / (max - min)) * 100}%, #E8DCC4 100%)`
+        }}
       />
-      <View className="flex-row justify-between mt-1">
-        <Text className="text-xs text-gray-500">{min}{suffix}</Text>
-        <Text className="text-xs text-gray-500">{max}{suffix}</Text>
+      <View className="flex-row justify-between mt-2">
+        <Text className="text-xs text-textLight">{min}{suffix}</Text>
+        <Text className="text-xs text-textLight">{max}{suffix}</Text>
       </View>
     </View>
   );
