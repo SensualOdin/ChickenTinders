@@ -90,36 +90,32 @@ export default function ResultsPage() {
     };
   }, [id, members, allMembersFinished]);
 
-  // Load/detect matches when all members finish or on initial load
+  // Load/detect matches when all members finish
   useEffect(() => {
-    if (!id || !group) return;
+    if (!id || !group || !allMembersFinished) return;
 
     const loadMatches = async () => {
       try {
+        console.log('All members finished, detecting matches...');
         setLoading(true);
 
         // First check if matches already exist
         const existingMatches = await getMatches(id);
 
         if (existingMatches.length > 0) {
+          console.log('Found existing matches:', existingMatches.length);
           setMatches(existingMatches);
           setLoading(false);
           return;
         }
 
-        // Check if all members have finished swiping
-        const allFinished = swipeStatus.length > 0 && swipeStatus.every((s) => s.swipe_count > 0);
-
-        if (!allFinished) {
-          // Not everyone is done yet, keep waiting
-          setLoading(false);
-          return;
-        }
-
-        // No existing matches and everyone finished, detect them
+        // No existing matches, detect them
+        console.log('No existing matches, running detection...');
         setDetecting(true);
         const allRestaurants = getMockRestaurants();
         const detectedMatches = await detectMatches(id, allRestaurants);
+
+        console.log('Detected matches:', detectedMatches.length);
 
         if (detectedMatches.length > 0) {
           await saveMatches(id, detectedMatches);
@@ -128,6 +124,9 @@ export default function ResultsPage() {
           setShowConfetti(true);
           // Hide confetti after animation
           setTimeout(() => setShowConfetti(false), 3000);
+        } else {
+          // No matches found, set empty array to trigger "no matches" UI
+          setMatches([]);
         }
 
         setDetecting(false);
@@ -140,7 +139,7 @@ export default function ResultsPage() {
     };
 
     loadMatches();
-  }, [id, group, allMembersFinished, swipeStatus]);
+  }, [id, group, allMembersFinished]);
 
   const handleGetDirections = (restaurant: MatchResult['restaurant_data']) => {
     const address = restaurant.location.display_address.join(', ');
