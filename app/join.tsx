@@ -20,12 +20,11 @@ export default function JoinPage() {
     try {
       setLoading(true);
 
-      // Check if group exists
+      // Check if group exists (id IS the group code)
       const { data: group, error: groupError } = await supabase
         .from('groups')
         .select('*')
-        .eq('code', upperCode)
-        .eq('status', 'active')
+        .eq('id', upperCode)
         .single();
 
       if (groupError || !group) {
@@ -33,10 +32,22 @@ export default function JoinPage() {
         return;
       }
 
-      // Check if group is expired (24 hours)
+      // Check if group is expired (24 hours) or not in valid state
       const expiresAt = new Date(group.expires_at);
       if (expiresAt < new Date()) {
         toast.error('This group has expired');
+        return;
+      }
+
+      // Check if group is still joinable (not matched/expired)
+      if (group.status === 'expired') {
+        toast.error('This group has expired');
+        return;
+      }
+
+      if (group.status === 'matched') {
+        // Still allow joining to see results
+        router.push(`/results/${group.id}`);
         return;
       }
 
