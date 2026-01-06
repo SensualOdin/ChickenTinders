@@ -141,9 +141,9 @@ export default function HistoryPage() {
               Sign In
             </Text>
           </Pressable>
-          <Pressable onPress={() => router.back()}>
+          <Pressable onPress={() => router.push('/account')}>
             <Text className="text-gray-600 text-base underline">
-              Go Back
+              Back to Account
             </Text>
           </Pressable>
         </View>
@@ -158,8 +158,8 @@ export default function HistoryPage() {
       <View className="max-w-app mx-auto w-full px-4 py-8">
         {/* Header */}
         <View className="mb-8">
-          <Pressable onPress={() => router.back()} className="mb-4">
-            <Text className="text-primary text-base font-semibold">← Back</Text>
+          <Pressable onPress={() => router.push('/account')} className="mb-4">
+            <Text className="text-primary text-base font-semibold">← Back to Account</Text>
           </Pressable>
 
           <Text className="text-6xl mb-4">📜</Text>

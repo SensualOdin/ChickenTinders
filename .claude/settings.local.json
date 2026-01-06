@@ -21,7 +21,11 @@
       "Bash(git -c core.hooksPath=/dev/null commit -m \"$\\(cat <<''EOF''\nAdd polling fallback for swipe progress updates\n\n- Added 2-second polling interval to fetch swipe status\n- Keeps real-time subscription as primary method\n- Ensures User 1 sees updates even if Realtime isn''t enabled\n- Properly cleans up both polling and subscription on unmount\n\nThis fixes the issue where User 1 stays stuck on \"Loading results...\"\nwhen User 2 finishes swiping.\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git -c core.hooksPath=/dev/null commit -m \"$\\(cat <<''EOF''\nUpdate Realtime setup guide for swipes table\n\n- Added instructions for enabling Realtime on swipes table\n- Clarified that polling fallback exists \\(2-second intervals\\)\n- Added verification steps for swipe progress tracking\n- Noted that Realtime is optional optimization\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git -c core.hooksPath=/dev/null commit -m \"$\\(cat <<''EOF''\nUpdate STATUS.md with Phases 6 & 7 complete\n\nPhase 6 \\(Authentication\\):\n- Dual-mode auth \\(guest + authenticated\\)\n- Email/password signup and login\n- Guest account linking\n- Group history for authenticated users\n\nPhase 7 \\(Real-time Swipe Progress\\):\n- Real-time swipe tracking\n- Waiting state with progress display\n- Auto-refresh with polling fallback\n- Match detection when all members finish\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(npm run web:reset:*)"
+      "Bash(npm run web:reset:*)",
+      "Bash(git pull:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(npx expo start:*)"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { useAuth } from '../lib/contexts/AuthContext';
 
@@ -17,8 +17,22 @@ export default function LandingPage() {
       {/* Container with max-width for desktop */}
       <View className="flex-1 max-w-app mx-auto w-full px-6">
 
-        {/* Account Button - Top Right */}
-        <View className="absolute top-6 right-6 z-10 animate-fade-in">
+        {/* Top Right Navigation */}
+        <View className="absolute top-6 right-6 z-10 animate-fade-in flex-row gap-3">
+          {/* My Groups Button - Only for authenticated users */}
+          {!isGuest && user && (
+            <Pressable
+              onPress={() => router.push('/my-groups')}
+              className="bg-surface px-5 py-2.5 rounded-full shadow-soft border border-accent flex-row items-center gap-2 active:scale-95 transition-all"
+            >
+              <Text className="text-lg">👥</Text>
+              <Text className="text-sm font-medium text-textDark tracking-wide">
+                My Groups
+              </Text>
+            </Pressable>
+          )}
+
+          {/* Account Button */}
           <Pressable
             onPress={() => router.push('/account')}
             className="bg-surface px-5 py-2.5 rounded-full shadow-soft border border-accent flex-row items-center gap-2 active:scale-95 transition-all"
@@ -36,14 +50,13 @@ export default function LandingPage() {
         <View className="flex-1 justify-center items-center animate-slide-up">
           {/* Logo with refined spacing */}
           <View className="mb-12 items-center">
-            <Text className="text-7xl mb-6 text-center">🍽️</Text>
-            <Text
-              className="text-5xl font-bold text-primary text-center tracking-tight"
-              style={{ fontFamily: 'Playfair Display' }}
-            >
-              ChickenTinders
-            </Text>
-            <View className="w-24 h-0.5 bg-secondary mt-4" />
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={{ width: 280, height: 280 }}
+              resizeMode="contain"
+              className="mb-4"
+              alt="ChickenTinders Logo"
+            />
           </View>
 
           {/* Tagline with refined typography */}

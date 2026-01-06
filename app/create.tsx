@@ -1,17 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Slider } from '../components/ui/Slider';
 import { PriceTierSelector } from '../components/ui/PriceTierSelector';
 import { DietaryTagSelector } from '../components/ui/DietaryTagSelector';
 import { supabase } from '../lib/supabase';
 import { generateGroupCode, isValidZipCode, getExpirationTime } from '../lib/utils';
 import { getUserId, setUserId, getDisplayName, setDisplayName, getDietaryTags, setDietaryTags } from '../lib/storage';
+import { getSavedGroup } from '../lib/api/savedGroups';
+import { useAuth } from '../lib/contexts/AuthContext';
 
 export default function CreateGroupPage() {
   const router = useRouter();
+  const { profile } = useAuth();
+  const params = useLocalSearchParams<{
+    savedGroupId?: string;
+    savedGroupName?: string;
+    zipCode?: string;
+    radius?: string;
+    priceTier?: string;
+  }>();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [savedGroupName, setSavedGroupName] = useState<string | null>(null);
 
   // Form state
   const [displayName, setDisplayNameState] = useState('');
@@ -19,6 +31,41 @@ export default function CreateGroupPage() {
   const [radius, setRadius] = useState(10);
   const [priceTier, setPriceTier] = useState(2);
   const [dietaryTags, setDietaryTagsState] = useState<string[]>([]);
+
+  // Pre-fill user name from profile
+  useEffect(() => {
+    if (profile?.display_name && !displayName) {
+      setDisplayNameState(profile.display_name);
+    }
+    if (profile?.dietary_tags) {
+      setDietaryTagsState(profile.dietary_tags);
+    }
+  }, [profile]);
+
+  // Pre-fill from saved group if provided
+  useEffect(() => {
+    if (params.savedGroupId) {
+      loadSavedGroup(params.savedGroupId);
+    } else if (params.zipCode) {
+      // Pre-fill from URL params
+      setZipCode(params.zipCode);
+      if (params.radius) setRadius(parseInt(params.radius));
+      if (params.priceTier) setPriceTier(parseInt(params.priceTier));
+      if (params.savedGroupName) setSavedGroupName(params.savedGroupName);
+    }
+  }, [params]);
+
+  const loadSavedGroup = async (groupId: string) => {
+    try {
+      const group = await getSavedGroup(groupId);
+      if (group) {
+        setSavedGroupName(group.name);
+        // Don't pre-fill ZIP/radius/price - user sets them each session
+      }
+    } catch (error) {
+      console.error('Error loading saved group:', error);
+    }
+  };
 
   // Validation
   const [zipError, setZipError] = useState('');
@@ -166,12 +213,30 @@ export default function CreateGroupPage() {
             className="text-4xl font-bold text-textDark mb-3 tracking-tight"
             style={{ fontFamily: 'Playfair Display' }}
           >
-            Create Group
+            {savedGroupName ? 'Start Session' : 'Create Group'}
           </Text>
           <Text className="text-base text-textMuted leading-relaxed">
-            Set your preferences and invite your friends
+            {savedGroupName
+              ? 'Enter your name and create a shareable group code'
+              : 'Set your preferences and invite your friends'
+            }
           </Text>
         </View>
+
+        {/* Saved Group Banner */}
+        {savedGroupName && (
+          <View className="bg-secondary/10 border border-secondary/30 rounded-xl p-4 mb-6">
+            <View className="flex-row items-center gap-2 mb-2">
+              <Text className="text-xl">👥</Text>
+              <Text className="text-textDark font-semibold">
+                Starting Session: {savedGroupName}
+              </Text>
+            </View>
+            <Text className="text-textMuted text-sm">
+              Creating a one-time group code to share with your members. Your preferences are pre-filled from your saved group.
+            </Text>
+          </View>
+        )}
 
         {/* Error Message */}
         {error && (
@@ -257,7 +322,7 @@ export default function CreateGroupPage() {
 
           {/* Cancel with refined style */}
           <Pressable
-            onPress={() => router.back()}
+            onPress={() => router.push('/')}
             className="py-4 items-center"
           >
             <Text className="text-textLight text-base tracking-wide">Cancel</Text>

@@ -68,8 +68,8 @@ export default function JoinPage() {
       <View className="flex-1 max-w-app mx-auto w-full px-4 py-8">
         {/* Header */}
         <View className="mb-8">
-          <Pressable onPress={() => router.back()} className="mb-4">
-            <Text className="text-primary text-base font-semibold">← Back</Text>
+          <Pressable onPress={() => router.push('/')} className="mb-4">
+            <Text className="text-primary text-base font-semibold">← Back to Home</Text>
           </Pressable>
 
           <Text className="text-3xl font-bold text-primary mb-2">

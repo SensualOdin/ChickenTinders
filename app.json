@@ -16,7 +16,8 @@
     },
     "platforms": ["web"],
     "userInterfaceStyle": "light",
-    "backgroundColor": "#FAFAFA",
-    "primaryColor": "#E53935"
+    "backgroundColor": "#FFF5E1",
+    "primaryColor": "#A91D3A",
+    "icon": "./app/assets/images/icon.png"
   }
 }

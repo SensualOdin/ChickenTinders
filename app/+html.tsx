@@ -39,7 +39,7 @@ export default function Root({ children }: PropsWithChildren) {
         <link rel="manifest" href="/site.webmanifest" />
 
         {/* Theme Color */}
-        <meta name="theme-color" content="#8B2635" />
+        <meta name="theme-color" content="#A91D3A" />
 
         {/* Disable pull-to-refresh */}
         <meta name="mobile-web-app-capable" content="yes" />
@@ -67,12 +67,12 @@ export default function Root({ children }: PropsWithChildren) {
 
 const responsiveBackground = `
 body {
-  background-color: #F8F6F1;
+  background-color: #FFF5E1;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #2A2421;
+    background-color: #2C0A0A;
   }
 }
 @media (prefers-reduced-motion: reduce) {

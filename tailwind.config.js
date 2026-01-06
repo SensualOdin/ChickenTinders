@@ -9,25 +9,28 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#8B2635', // Deep burgundy
-          dark: '#6B1C29',
-          light: '#A63D4C',
+          DEFAULT: '#A91D3A', // ChickenTinders red
+          dark: '#8B1538',
+          light: '#C72C4A',
         },
         secondary: {
-          DEFAULT: '#D4A574', // Warm gold
-          dark: '#B8905F',
-          light: '#E6C9A0',
+          DEFAULT: '#FFB800', // Golden yellow
+          dark: '#E6A500',
+          light: '#FFC933',
         },
         accent: {
-          DEFAULT: '#E8DCC4', // Warm cream
-          dark: '#D4C4A8',
+          DEFAULT: '#FF6B35', // Warm orange
+          dark: '#E55A2B',
+          light: '#FF8C5C',
         },
-        success: '#2D5F3F', // Forest green
-        background: '#F8F6F1', // Warm white
+        success: '#4CAF50', // Fresh green
+        warning: '#FF8C42', // Warm orange
+        background: '#FFF5E1', // Cream background
         surface: '#FFFFFF',
-        textDark: '#2A2421', // Rich charcoal
-        textMuted: '#6B6460',
-        textLight: '#9B9490',
+        dark: '#2C0A0A', // Deep brown
+        textDark: '#2C0A0A', // Deep brown
+        textMuted: '#6B4423',
+        textLight: '#9B7653',
       },
       maxWidth: {
         'app': '768px',

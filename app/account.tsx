@@ -37,8 +37,8 @@ export default function AccountPage() {
         <View className="flex-1 max-w-app mx-auto w-full px-4 py-8">
           {/* Header */}
           <View className="mb-8">
-            <Pressable onPress={() => router.back()} className="mb-4">
-              <Text className="text-primary text-base font-semibold">← Back</Text>
+            <Pressable onPress={() => router.push('/')} className="mb-4">
+              <Text className="text-primary text-base font-semibold">← Back to Home</Text>
             </Pressable>
 
             <Text className="text-6xl mb-4">👤</Text>
@@ -124,8 +124,8 @@ export default function AccountPage() {
       <View className="max-w-app mx-auto w-full px-4 py-8">
         {/* Header */}
         <View className="mb-8">
-          <Pressable onPress={() => router.back()} className="mb-4">
-            <Text className="text-primary text-base font-semibold">← Back</Text>
+          <Pressable onPress={() => router.push('/')} className="mb-4">
+            <Text className="text-primary text-base font-semibold">← Back to Home</Text>
           </Pressable>
 
           <Text className="text-6xl mb-4">👤</Text>
@@ -192,6 +192,19 @@ export default function AccountPage() {
             Quick Actions
           </Text>
           <View className="gap-3">
+            <Pressable
+              onPress={() => router.push('/my-groups')}
+              className="flex-row items-center justify-between py-3 border-b border-gray-100"
+            >
+              <View className="flex-row items-center gap-3">
+                <Text className="text-2xl">👥</Text>
+                <Text className="text-base font-semibold text-textDark">
+                  My Groups
+                </Text>
+              </View>
+              <Text className="text-gray-400">→</Text>
+            </Pressable>
+
             <Pressable
               onPress={() => router.push('/history')}
               className="flex-row items-center justify-between py-3 border-b border-gray-100"
