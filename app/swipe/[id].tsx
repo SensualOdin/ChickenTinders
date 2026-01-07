@@ -28,7 +28,12 @@ export default function SwipePage() {
 
   // Load restaurants when group is loaded
   useEffect(() => {
-    if (!group || groupLoading) return;
+    console.log('SwipePage useEffect:', { group: !!group, groupLoading, loading });
+
+    if (!group || groupLoading) {
+      console.log('Waiting for group to load...', { hasGroup: !!group, groupLoading });
+      return;
+    }
 
     const loadRestaurants = async () => {
       try {
