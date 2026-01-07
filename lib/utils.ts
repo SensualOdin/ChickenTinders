@@ -1,3 +1,17 @@
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+/**
+ * Merge Tailwind CSS classes with proper precedence
+ * Used throughout the component library for dynamic styling
+ *
+ * Example:
+ *   cn('px-4 py-2', isActive && 'bg-primary', className)
+ */
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 // Generate a random 6-character alphanumeric code (e.g., CHKN22)
 export function generateGroupCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed ambiguous chars (0, O, 1, I)

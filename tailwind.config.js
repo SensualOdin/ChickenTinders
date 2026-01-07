@@ -43,6 +43,8 @@ module.exports = {
         },
         success: '#4CAF50', // Fresh green
         warning: '#FF8C42', // Warm orange
+        error: '#EF4444', // Error red
+        info: '#3B82F6', // Info blue
         background: '#FFF5E1', // Cream background
         surface: '#FFFFFF',
         dark: '#2C0A0A', // Deep brown
@@ -69,6 +71,7 @@ module.exports = {
         'float': 'float 6s ease-in-out infinite',
         'pulse': 'pulse 2s ease-in-out infinite',
         'card-swipe': 'cardSwipe 4s cubic-bezier(0.16, 1, 0.3, 1) infinite',
+        'shimmer': 'shimmer 2s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -96,6 +99,10 @@ module.exports = {
           '20%': { transform: 'rotate(12deg) translateX(120px)', opacity: '0' },
           '21%': { transform: 'rotate(0deg) translateX(0)', opacity: '1' },
           '100%': { transform: 'rotate(0deg) translateX(0)' },
+        },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
         },
       },
     },
