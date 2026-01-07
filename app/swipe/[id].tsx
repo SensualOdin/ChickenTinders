@@ -118,9 +118,9 @@ export default function SwipePage() {
 
       // Check if this was the last card
       if (currentIndex + 1 >= restaurants.length) {
-        // All done! Check for matches
+        // All done! Go back to lobby to wait for others
         setTimeout(() => {
-          router.push(`/results/${id}`);
+          router.push(`/lobby/${id}`);
         }, 500);
       }
     } catch (err: any) {

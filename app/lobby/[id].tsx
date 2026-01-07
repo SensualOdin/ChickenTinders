@@ -66,6 +66,10 @@ export default function LobbyPage() {
 
     const fetchSwipeProgress = async () => {
       try {
+        // Get total number of restaurants for this group (mock data = 5)
+        // TODO: Get actual restaurant count from group settings or API
+        const totalRestaurants = 5; // Mock restaurants count
+
         // Get swipe counts for each member
         const { data: swipes, error: swipeError } = await supabase
           .from('swipes')
@@ -317,7 +321,9 @@ export default function LobbyPage() {
           <View className="gap-3">
             {members.map((member) => {
               const swipeCount = swipeProgress[member.user_id] || 0;
-              const isSwiping = swipeCount > 0;
+              const totalRestaurants = 5; // Mock data has 5 restaurants
+              const hasFinished = swipeCount >= totalRestaurants && swipeCount > 0;
+              const isSwiping = swipeCount > 0 && !hasFinished;
 
               return (
                 <View key={member.id} className="flex-row items-center gap-3">
@@ -327,12 +333,21 @@ export default function LobbyPage() {
                       {member.user.display_name}
                     </Text>
                     <Text className="text-sm text-gray-500">
-                      {isSwiping ? `${swipeCount} swipes` : 'Waiting to start...'}
+                      {hasFinished
+                        ? 'Done swiping'
+                        : isSwiping
+                          ? `${swipeCount} swipes`
+                          : 'Waiting to start...'}
                     </Text>
                   </View>
                   {isSwiping && (
                     <View className="bg-success px-2 py-1 rounded-lg">
                       <Text className="text-white text-xs font-semibold">Swiping</Text>
+                    </View>
+                  )}
+                  {hasFinished && (
+                    <View className="bg-primary px-2 py-1 rounded-lg">
+                      <Text className="text-white text-xs font-semibold">✓ Finished</Text>
                     </View>
                   )}
                 </View>
