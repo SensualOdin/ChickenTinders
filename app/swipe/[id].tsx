@@ -13,6 +13,7 @@ import { getMockRestaurants } from '../../lib/api/mock-restaurants';
 import { supabase } from '../../lib/supabase';
 import { getUserId } from '../../lib/storage';
 import { haptic } from '../../lib/utils';
+import { EmptyState } from '../../components/feedback/EmptyState';
 
 export default function SwipePage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -177,20 +178,20 @@ export default function SwipePage() {
   if (error) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <View className="flex-1 bg-background items-center justify-center px-4">
-        <Text className="text-6xl mb-4">😕</Text>
-        <Text className="text-2xl font-bold text-textDark mb-2 text-center">
-          No Restaurants Found
-        </Text>
-        <Text className="text-base text-gray-600 text-center mb-6">
-          {error}
-        </Text>
-        <Pressable
-          onPress={() => router.back()}
-          className="bg-primary px-6 py-3 rounded-xl active:scale-95"
-        >
-          <Text className="text-white font-semibold">Go Back</Text>
-        </Pressable>
+        <View className="flex-1 bg-background">
+          <EmptyState
+            icon="😕"
+            title="No Restaurants Found"
+            description={error || "We couldn't find any restaurants matching your preferences. Try adjusting your filters or search radius."}
+            action={{
+              label: 'Adjust Preferences',
+              onPress: () => router.back(),
+            }}
+            secondaryAction={{
+              label: 'Start Over',
+              onPress: () => router.push('/'),
+            }}
+          />
         </View>
       </GestureHandlerRootView>
     );
