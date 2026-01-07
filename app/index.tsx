@@ -2,6 +2,7 @@ import { View, Text, Pressable, ScrollView, Image } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { useAuth } from '../lib/contexts/AuthContext';
 import { PhoneDemo } from '../components/PhoneDemo';
+import { Button } from '../components/ui/Button';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -28,23 +29,21 @@ export default function LandingPage() {
 
           <View className="flex-row gap-3">
             {!isGuest && user && (
-              <Pressable
-                onPress={() => router.push('/my-groups')}
-                className="bg-transparent px-5 py-2.5 rounded-full active:bg-cream-dark transition-all"
+              <Button
+                href="/my-groups"
+                variant="ghost"
+                size="sm"
               >
-                <Text className="text-sm font-semibold text-textDark tracking-wide">
-                  My Groups
-                </Text>
-              </Pressable>
+                My Groups
+              </Button>
             )}
-            <Pressable
-              onPress={() => router.push('/account')}
-              className="bg-surface border-2 border-primary px-5 py-2.5 rounded-full active:bg-primary transition-all"
+            <Button
+              href="/account"
+              variant="outline"
+              size="sm"
             >
-              <Text className="text-sm font-semibold text-primary tracking-wide">
-                {!isGuest && profile ? profile.display_name : 'Sign In'}
-              </Text>
-            </Pressable>
+              {!isGuest && profile ? profile.display_name : 'Sign In'}
+            </Button>
           </View>
         </View>
       </View>
@@ -77,21 +76,21 @@ export default function LandingPage() {
 
             {/* CTAs */}
             <View className="flex-row gap-4 mb-10 animate-slide-up" style={{ animationDelay: '0.3s' }}>
-              <Link href="/create" asChild>
-                <Pressable className="bg-primary px-8 py-4 rounded-full shadow-elevated active:scale-95 active:bg-primary-dark transition-all">
-                  <Text className="text-surface text-base font-semibold tracking-wide">
-                    Create a Group →
-                  </Text>
-                </Pressable>
-              </Link>
+              <Button
+                href="/create"
+                variant="primary"
+                size="lg"
+              >
+                Create a Group →
+              </Button>
 
-              <Link href="/join" asChild>
-                <Pressable className="bg-surface border-2 border-cream-dark px-8 py-4 rounded-full active:border-primary active:bg-cream transition-all">
-                  <Text className="text-primary text-base font-semibold tracking-wide">
-                    Join with Code
-                  </Text>
-                </Pressable>
-              </Link>
+              <Button
+                href="/join"
+                variant="outline"
+                size="lg"
+              >
+                Join with Code
+              </Button>
             </View>
 
             {/* Trust Signals */}
@@ -294,13 +293,14 @@ export default function LandingPage() {
           <Text className="text-lg text-surface/80 mb-10 text-center max-w-lg">
             Create a group, invite your crew, and find your perfect dinner match in minutes.
           </Text>
-          <Link href="/create" asChild>
-            <Pressable className="bg-surface px-8 py-4 rounded-full shadow-elevated active:scale-95 active:bg-cream transition-all">
-              <Text className="text-primary text-base font-semibold tracking-wide">
-                Start Swiping Now →
-              </Text>
-            </Pressable>
-          </Link>
+          <Button
+            href="/create"
+            variant="secondary"
+            size="lg"
+            className="bg-surface text-primary"
+          >
+            Start Swiping Now →
+          </Button>
         </View>
       </View>
 
@@ -318,11 +318,11 @@ export default function LandingPage() {
                 Terms of Service
               </Text>
             </Link>
-            <Pressable onPress={() => router.push('/account')}>
+            <Link href="/account">
               <Text className="text-sm text-surface/60 tracking-wide hover:text-surface transition-all">
                 Contact Us
               </Text>
-            </Pressable>
+            </Link>
           </View>
           <Text className="text-sm text-surface/40">
             © 2025 Chicken Tinders. Made with 🍗 for hungry groups everywhere.

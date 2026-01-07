@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
 import { BackButton } from '../components/navigation/BackButton';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
 
 export default function JoinPage() {
   const router = useRouter();
@@ -88,41 +90,29 @@ export default function JoinPage() {
         <View>
           {/* Group Code Input */}
           <View className="mb-6">
-            <Text className="text-sm font-semibold text-textDark mb-2">
-              Group Code
-            </Text>
-            <TextInput
+            <Input
+              label="Group Code"
               value={groupCode}
               onChangeText={setGroupCode}
               placeholder="e.g., CHKN22"
-              placeholderTextColor="#9CA3AF"
               autoCapitalize="characters"
               maxLength={6}
-              className="bg-white border-2 border-cream-dark rounded-xl px-4 py-4 text-lg font-mono text-textDark focus:border-primary focus:ring-2 focus:ring-primary/20"
+              helperText="Ask your friend for the group code"
+              className="font-mono"
             />
-            <Text className="text-xs text-gray-500 mt-1">
-              Ask your friend for the group code
-            </Text>
           </View>
 
           {/* Join Button */}
-          <Pressable
+          <Button
             onPress={handleJoinGroup}
             disabled={loading || !groupCode.trim()}
-            className={`py-4 rounded-full items-center ${
-              loading || !groupCode.trim()
-                ? 'bg-surface opacity-50'
-                : 'bg-primary active:scale-95 active:bg-primary-dark'
-            }`}
+            loading={loading}
+            variant="primary"
+            size="lg"
+            fullWidth
           >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white text-lg font-bold">
-                Join Group
-              </Text>
-            )}
-          </Pressable>
+            Join Group
+          </Button>
 
           {/* Divider */}
           <View className="flex-row items-center my-8">
@@ -136,14 +126,13 @@ export default function JoinPage() {
             <Text className="text-sm text-gray-600 mb-4">
               Don't have a group code?
             </Text>
-            <Pressable
-              onPress={() => router.push('/create')}
-              className="border-2 border-primary px-6 py-3 rounded-xl active:scale-95"
+            <Button
+              href="/create"
+              variant="outline"
+              size="md"
             >
-              <Text className="text-primary text-base font-semibold">
-                Create Your Own Group
-              </Text>
-            </Pressable>
+              Create Your Own Group
+            </Button>
           </View>
         </View>
 
