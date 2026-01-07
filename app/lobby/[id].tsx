@@ -86,6 +86,27 @@ export default function LobbyPage() {
         });
 
         setSwipeProgress(progressMap);
+
+        // Check if all members have finished swiping
+        const allFinished = members.every((member) => {
+          const userSwipeCount = progressMap[member.user_id] || 0;
+          return userSwipeCount >= totalRestaurants;
+        });
+
+        console.log('Swipe progress check:', {
+          progressMap,
+          allFinished,
+          memberCount: members.length,
+          totalRestaurants
+        });
+
+        // If everyone is done, redirect to results
+        if (allFinished && members.length >= 2) {
+          console.log('All members finished! Redirecting to results...');
+          setTimeout(() => {
+            router.push(`/results/${id}`);
+          }, 1000); // Small delay to show the "Done swiping" status
+        }
       } catch (err) {
         console.error('Error fetching swipe progress:', err);
       }
@@ -105,6 +126,7 @@ export default function LobbyPage() {
           filter: `group_id=eq.${id}`,
         },
         () => {
+          console.log('Swipe change detected, refetching progress...');
           fetchSwipeProgress();
         }
       )
@@ -113,7 +135,7 @@ export default function LobbyPage() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [id, members]);
+  }, [id, members, router]);
 
   const joinGroup = async (userId: string) => {
     if (!id || joining) return;
