@@ -30,6 +30,7 @@ export default function JoinPage() {
 
       if (groupError || !group) {
         toast.error('Group not found. Check your code and try again.');
+        setLoading(false);
         return;
       }
 
@@ -37,23 +38,27 @@ export default function JoinPage() {
       const expiresAt = new Date(group.expires_at);
       if (expiresAt < new Date()) {
         toast.error('This group has expired');
+        setLoading(false);
         return;
       }
 
       // Check if group is still joinable (not matched/expired)
       if (group.status === 'expired') {
         toast.error('This group has expired');
+        setLoading(false);
         return;
       }
 
       if (group.status === 'matched') {
         // Still allow joining to see results
         router.push(`/results/${group.id}`);
+        setLoading(false);
         return;
       }
 
       // Redirect to lobby
       router.push(`/lobby/${group.id}`);
+      setLoading(false);
     } catch (error) {
       console.error('Error joining group:', error);
       toast.error('Failed to join group');
