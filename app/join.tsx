@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-nativ
 import { useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { supabase } from '../lib/supabase';
+import { BackButton } from '../components/navigation/BackButton';
 
 export default function JoinPage() {
   const router = useRouter();
@@ -68,14 +69,12 @@ export default function JoinPage() {
       <View className="flex-1 max-w-app mx-auto w-full px-4 py-8">
         {/* Header */}
         <View className="mb-8">
-          <Pressable onPress={() => router.push('/')} className="mb-4">
-            <Text className="text-primary text-base font-semibold">← Back to Home</Text>
-          </Pressable>
+          <BackButton variant="text" label="Back to Home" />
 
           <Text className="text-3xl font-bold text-primary mb-2">
             Join a Group
           </Text>
-          <Text className="text-base text-gray-600">
+          <Text className="text-base text-textMuted">
             Enter the 6-character group code to join your friends
           </Text>
         </View>
@@ -94,10 +93,7 @@ export default function JoinPage() {
               placeholderTextColor="#9CA3AF"
               autoCapitalize="characters"
               maxLength={6}
-              className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 text-lg font-mono text-textDark focus:border-primary"
-              style={{
-                outlineStyle: 'none',
-              }}
+              className="bg-white border-2 border-cream-dark rounded-xl px-4 py-4 text-lg font-mono text-textDark focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             <Text className="text-xs text-gray-500 mt-1">
               Ask your friend for the group code
@@ -108,10 +104,10 @@ export default function JoinPage() {
           <Pressable
             onPress={handleJoinGroup}
             disabled={loading || !groupCode.trim()}
-            className={`py-4 rounded-xl items-center ${
+            className={`py-4 rounded-full items-center ${
               loading || !groupCode.trim()
-                ? 'bg-gray-300'
-                : 'bg-secondary active:scale-95'
+                ? 'bg-surface opacity-50'
+                : 'bg-primary active:scale-95 active:bg-primary-dark'
             }`}
           >
             {loading ? (
@@ -147,11 +143,11 @@ export default function JoinPage() {
         </View>
 
         {/* Info Box */}
-        <View className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <Text className="text-sm text-blue-900 font-semibold mb-2">
+        <View className="mt-8 bg-accent/10 border-2 border-accent rounded-xl p-4">
+          <Text className="text-sm text-accent-dark font-semibold mb-2">
             💡 How it works
           </Text>
-          <Text className="text-sm text-blue-800">
+          <Text className="text-sm text-textDark">
             1. Get the 6-character code from your friend{'\n'}
             2. Enter it above to join their group{'\n'}
             3. Enter your name in the lobby{'\n'}

@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../lib/contexts/AuthContext';
 import { haptic } from '../lib/utils';
+import { BackButton } from '../components/navigation/BackButton';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -37,9 +38,7 @@ export default function AccountPage() {
         <View className="flex-1 max-w-app mx-auto w-full px-4 py-8">
           {/* Header */}
           <View className="mb-8">
-            <Pressable onPress={() => router.push('/')} className="mb-4">
-              <Text className="text-primary text-base font-semibold">← Back to Home</Text>
-            </Pressable>
+            <BackButton variant="text" label="Back to Home" />
 
             <Text className="text-6xl mb-4">👤</Text>
             <Text className="text-3xl font-bold text-primary mb-2">
@@ -74,18 +73,18 @@ export default function AccountPage() {
           )}
 
           {/* Benefits Card */}
-          <View className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-4">
-            <Text className="text-lg font-bold text-blue-900 mb-3">
+          <View className="bg-accent/10 border-2 border-accent rounded-2xl p-4 mb-4">
+            <Text className="text-lg font-bold text-accent-dark mb-3">
               ✨ Create an Account
             </Text>
-            <Text className="text-sm text-blue-800 mb-4">
+            <Text className="text-sm text-textDark mb-4">
               Save your groups and preferences by creating a free account.
             </Text>
             <View className="gap-2 mb-4">
-              <Text className="text-sm text-blue-800">• View group history</Text>
-              <Text className="text-sm text-blue-800">• Save preferences</Text>
-              <Text className="text-sm text-blue-800">• Access from any device</Text>
-              <Text className="text-sm text-blue-800">• Never lose your data</Text>
+              <Text className="text-sm text-textDark">• View group history</Text>
+              <Text className="text-sm text-textDark">• Save preferences</Text>
+              <Text className="text-sm text-textDark">• Access from any device</Text>
+              <Text className="text-sm text-textDark">• Never lose your data</Text>
             </View>
             <Pressable
               onPress={() => router.push('/auth/signup')}
