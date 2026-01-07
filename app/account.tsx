@@ -4,6 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../lib/contexts/AuthContext';
 import { haptic } from '../lib/utils';
 import { BackButton } from '../components/navigation/BackButton';
+import { Button } from '../components/ui/Button';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -86,14 +87,14 @@ export default function AccountPage() {
               <Text className="text-sm text-textDark">• Access from any device</Text>
               <Text className="text-sm text-textDark">• Never lose your data</Text>
             </View>
-            <Pressable
-              onPress={() => router.push('/auth/signup')}
-              className="bg-primary py-3 rounded-xl items-center active:scale-95"
+            <Button
+              href="/auth/signup"
+              variant="primary"
+              size="md"
+              fullWidth
             >
-              <Text className="text-white text-base font-bold">
-                {profile ? 'Link Guest Account' : 'Create Account'}
-              </Text>
-            </Pressable>
+              {profile ? 'Link Guest Account' : 'Create Account'}
+            </Button>
           </View>
 
           {/* Already Have Account */}
@@ -101,14 +102,13 @@ export default function AccountPage() {
             <Text className="text-sm text-gray-600 mb-3">
               Already have an account?
             </Text>
-            <Pressable
-              onPress={() => router.push('/auth/login')}
-              className="border-2 border-secondary px-6 py-3 rounded-xl active:scale-95"
+            <Button
+              href="/auth/login"
+              variant="outline"
+              size="md"
             >
-              <Text className="text-secondary text-base font-semibold">
-                Sign In
-              </Text>
-            </Pressable>
+              Sign In
+            </Button>
           </View>
         </View>
       </View>
@@ -123,9 +123,7 @@ export default function AccountPage() {
       <View className="max-w-app mx-auto w-full px-4 py-8">
         {/* Header */}
         <View className="mb-8">
-          <Pressable onPress={() => router.push('/')} className="mb-4">
-            <Text className="text-primary text-base font-semibold">← Back to Home</Text>
-          </Pressable>
+          <BackButton variant="text" label="Back to Home" />
 
           <Text className="text-6xl mb-4">👤</Text>
           <Text className="text-3xl font-bold text-primary mb-2">
@@ -246,14 +244,15 @@ export default function AccountPage() {
         </View>
 
         {/* Sign Out */}
-        <Pressable
+        <Button
           onPress={handleSignOut}
-          className="bg-gray-200 py-4 rounded-xl items-center active:scale-95 mb-4"
+          variant="outline"
+          size="lg"
+          fullWidth
+          className="mb-4"
         >
-          <Text className="text-gray-700 text-lg font-bold">
-            Sign Out
-          </Text>
-        </Pressable>
+          Sign Out
+        </Button>
 
         {/* App Info */}
         <View className="items-center py-4">

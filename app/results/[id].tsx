@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, ScrollView, ActivityIndicator, Image, Linking } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Image, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useGroup } from '../../lib/hooks/useGroup';
@@ -7,6 +7,7 @@ import { detectMatches, saveMatches, getMatches, MatchResult } from '../../lib/u
 import { getMockRestaurants } from '../../lib/api/mock-restaurants';
 import { ConfettiCelebration } from '../../components/animations/ConfettiCelebration';
 import { ResultsCardSkeleton } from '../../components/ui/LoadingSkeleton';
+import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/supabase';
 import { Avatar } from '../../components/ui/Avatar';
 
@@ -303,12 +304,13 @@ export default function ResultsPage() {
         <Text className="text-base text-gray-600 text-center mb-6">
           You and your friends didn't match on any restaurants. Try again with different preferences!
         </Text>
-        <Pressable
-          onPress={() => router.push('/')}
-          className="bg-primary px-6 py-3 rounded-xl active:scale-95"
+        <Button
+          href="/"
+          variant="primary"
+          size="md"
         >
-          <Text className="text-white font-semibold">Create New Group</Text>
-        </Pressable>
+          Create New Group
+        </Button>
       </View>
     );
   }
@@ -394,14 +396,16 @@ export default function ResultsPage() {
               </Text>
 
               {/* Get Directions Button */}
-              <Pressable
+              <Button
                 onPress={() => handleGetDirections(match.restaurant_data)}
-                className="bg-success py-3 rounded-xl items-center active:scale-95"
+                variant="primary"
+                size="md"
+                fullWidth
+                icon="location-arrow"
+                className="bg-success active:bg-success/80"
               >
-                <Text className="text-white text-base font-bold">
-                  🗺️ Get Directions
-                </Text>
-              </Pressable>
+                Get Directions
+              </Button>
             </View>
           </View>
         ))}
@@ -411,14 +415,14 @@ export default function ResultsPage() {
           <Text className="text-center text-base text-gray-600 mb-4">
             Planning another group dinner?
           </Text>
-          <Pressable
-            onPress={() => router.push('/')}
-            className="bg-secondary py-4 rounded-xl items-center active:scale-95"
+          <Button
+            href="/"
+            variant="secondary"
+            size="lg"
+            fullWidth
           >
-            <Text className="text-white text-lg font-bold">
-              Create New Group
-            </Text>
-          </Pressable>
+            Create New Group
+          </Button>
         </View>
       </View>
     </ScrollView>

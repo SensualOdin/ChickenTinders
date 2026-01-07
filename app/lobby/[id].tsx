@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ScrollView, ActivityIndicator, TextInput } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useGroup } from '../../lib/hooks/useGroup';
 import { Avatar } from '../../components/ui/Avatar';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import { copyToClipboard, vibrate, formatPriceTier } from '../../lib/utils';
 import { supabase } from '../../lib/supabase';
 import { getUserId, setUserId, getDisplayName, setDisplayName } from '../../lib/storage';
@@ -243,12 +245,13 @@ export default function LobbyPage() {
         <Text className="text-base text-gray-600 text-center mb-6">
           {error || 'This group doesn\'t exist or has expired.'}
         </Text>
-        <Pressable
-          onPress={() => router.push('/')}
-          className="bg-primary px-6 py-3 rounded-xl active:scale-95"
+        <Button
+          href="/"
+          variant="primary"
+          size="md"
         >
-          <Text className="text-white font-semibold">Go Home</Text>
-        </Pressable>
+          Go Home
+        </Button>
       </View>
     );
   }
@@ -263,28 +266,24 @@ export default function LobbyPage() {
           <Text className="text-base text-gray-600 mb-6">
             Enter your name to join the group
           </Text>
-          <input
-            type="text"
+          <TextInput
             placeholder="Your name"
             value={tempName}
-            onChange={(e) => setTempName(e.target.value)}
+            onChangeText={setTempName}
             className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-base mb-4"
             maxLength={50}
             autoFocus
           />
-          <Pressable
+          <Button
             onPress={handleJoinWithName}
             disabled={joining}
-            className={`bg-primary py-3 rounded-xl items-center active:scale-95 ${
-              joining ? 'opacity-50' : ''
-            }`}
+            loading={joining}
+            variant="primary"
+            size="md"
+            fullWidth
           >
-            {joining ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white font-bold text-lg">Join Group</Text>
-            )}
-          </Pressable>
+            Join Group
+          </Button>
         </View>
       </View>
     );
@@ -386,40 +385,37 @@ export default function LobbyPage() {
           <Text className="text-sm text-blue-800 mb-3">
             Share the code <Text className="font-mono font-bold">{id}</Text> or send the link
           </Text>
-          <Pressable
+          <Button
             onPress={handleCopyLink}
-            className="bg-secondary py-3 rounded-xl items-center active:scale-95"
+            variant="secondary"
+            size="md"
+            fullWidth
           >
-            <Text className="text-white text-base font-bold">Copy Invite Link</Text>
-          </Pressable>
+            Copy Invite Link
+          </Button>
         </View>
 
         {/* Start Swiping Button */}
-        <Pressable
+        <Button
           onPress={handleStartSwiping}
           disabled={!canStartSwiping}
-          className={`py-4 rounded-xl items-center active:scale-95 ${
-            canStartSwiping
-              ? 'bg-primary'
-              : 'bg-gray-300'
-          }`}
+          variant="primary"
+          size="lg"
+          fullWidth
         >
-          <Text
-            className={`text-lg font-bold ${
-              canStartSwiping ? 'text-white' : 'text-gray-500'
-            }`}
-          >
-            {canStartSwiping ? '▶️ Start Swiping' : '⏳ Waiting for more people...'}
-          </Text>
-        </Pressable>
+          {canStartSwiping ? '▶️ Start Swiping' : '⏳ Waiting for more people...'}
+        </Button>
 
         {/* Back Button */}
-        <Pressable
-          onPress={() => router.push('/')}
-          className="py-3 items-center mt-4"
+        <Button
+          href="/"
+          variant="ghost"
+          size="md"
+          fullWidth
+          className="mt-4"
         >
-          <Text className="text-gray-600 text-base">← Back to Home</Text>
-        </Pressable>
+          ← Back to Home
+        </Button>
 
         {/* Bottom Spacing */}
         <View className="h-8" />

@@ -4,6 +4,8 @@ import { useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../lib/contexts/AuthContext';
 import { getSavedGroups, deleteSavedGroup, SavedGroup } from '../lib/api/savedGroups';
+import { BackButton } from '../components/navigation/BackButton';
+import { Button } from '../components/ui/Button';
 import { haptic } from '../lib/utils';
 
 export default function MyGroupsPage() {
@@ -94,12 +96,14 @@ export default function MyGroupsPage() {
         <View className="max-w-app mx-auto w-full px-6 py-8">
           {/* Header */}
           <View className="mb-8">
-            <Pressable
-              onPress={() => router.push('/account')}
-              className="mb-4 self-start"
+            <Button
+              href="/account"
+              variant="ghost"
+              size="sm"
+              className="mb-4 self-start -ml-2"
             >
-              <Text className="text-primary text-base">← Back to Account</Text>
-            </Pressable>
+              ← Back to Account
+            </Button>
 
             <Text className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Playfair Display' }}>
               My Groups
@@ -110,14 +114,15 @@ export default function MyGroupsPage() {
           </View>
 
           {/* Create New Group Button */}
-          <Pressable
-            onPress={() => router.push('/my-groups/create')}
-            className="bg-primary px-6 py-4 rounded-2xl mb-6 active:scale-95 shadow-card"
+          <Button
+            href="/my-groups/create"
+            variant="primary"
+            size="lg"
+            fullWidth
+            className="mb-6"
           >
-            <Text className="text-surface text-center font-semibold text-base">
-              + Create New Group
-            </Text>
-          </Pressable>
+            + Create New Group
+          </Button>
 
           {/* Groups List */}
           {groups.length === 0 ? (
@@ -147,12 +152,14 @@ export default function MyGroupsPage() {
                         {group.members?.length || 0} members
                       </Text>
                     </View>
-                    <Pressable
-                      onPress={() => router.push(`/my-groups/edit/${group.id}`)}
-                      className="bg-accent/10 px-4 py-2 rounded-lg active:scale-95"
+                    <Button
+                      href={`/my-groups/edit/${group.id}`}
+                      variant="outline"
+                      size="sm"
+                      className="bg-accent/10 border-0"
                     >
-                      <Text className="text-accent text-sm font-medium">Edit</Text>
-                    </Pressable>
+                      Edit
+                    </Button>
                   </View>
 
                   {/* Members Preview */}
@@ -185,20 +192,24 @@ export default function MyGroupsPage() {
 
                   {/* Action Buttons */}
                   <View className="flex-row gap-3">
-                    <Pressable
-                      onPress={() => handleStartSession(group)}
-                      className="flex-1 bg-primary px-6 py-3 rounded-xl active:scale-95"
-                    >
-                      <Text className="text-surface text-center font-semibold">
+                    <View className="flex-1">
+                      <Button
+                        onPress={() => handleStartSession(group)}
+                        variant="primary"
+                        size="md"
+                        fullWidth
+                      >
                         Start Session
-                      </Text>
-                    </Pressable>
-                    <Pressable
+                      </Button>
+                    </View>
+                    <Button
                       onPress={() => handleDeleteGroup(group.id, group.name)}
-                      className="bg-surface border border-primary/30 px-4 py-3 rounded-xl active:scale-95"
+                      variant="outline"
+                      size="md"
+                      className="px-4"
                     >
-                      <Text className="text-primary text-center">🗑️</Text>
-                    </Pressable>
+                      🗑️
+                    </Button>
                   </View>
                 </View>
               ))}

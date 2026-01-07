@@ -8,6 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useGroup } from '../../lib/hooks/useGroup';
 import { SwipeableCard } from '../../components/deck/SwipeableCard';
 import { RestaurantCardSkeleton } from '../../components/ui/LoadingSkeleton';
+import { BackButton } from '../../components/navigation/BackButton';
 import { getRestaurantsForGroup, YelpBusiness } from '../../lib/api/yelp';
 import { getMockRestaurants } from '../../lib/api/mock-restaurants';
 import { supabase } from '../../lib/supabase';
@@ -145,12 +146,7 @@ export default function SwipePage() {
         <View className="bg-white/90 px-4 py-4 shadow-sm z-20 backdrop-blur-sm">
           <View className="max-w-app mx-auto w-full">
             <View className="flex-row items-center justify-between mb-3">
-              <Pressable 
-                onPress={() => router.back()}
-                className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center active:scale-95 transition-all"
-              >
-                <FontAwesome name="chevron-left" size={16} color="#4B5563" />
-              </Pressable>
+              <BackButton variant="icon" />
               <Text className="text-base font-semibold text-gray-700">
                 Loading...
               </Text>
@@ -236,12 +232,7 @@ export default function SwipePage() {
       <View className="bg-white/90 px-4 py-4 shadow-sm z-20 backdrop-blur-sm">
         <View className="max-w-app mx-auto w-full">
           <View className="flex-row items-center justify-between mb-3">
-            <Pressable 
-              onPress={() => router.back()}
-              className="w-10 h-10 bg-gray-50 rounded-full items-center justify-center active:scale-95 transition-all"
-            >
-              <FontAwesome name="chevron-left" size={16} color="#4B5563" />
-            </Pressable>
+            <BackButton variant="icon" />
             <View className="items-end">
               <Text className="text-xs font-semibold text-primary uppercase tracking-wider">
                 Restaurants Found

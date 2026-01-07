@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Slider } from '../components/ui/Slider';
 import { PriceTierSelector } from '../components/ui/PriceTierSelector';
 import { DietaryTagSelector } from '../components/ui/DietaryTagSelector';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
 import { supabase } from '../lib/supabase';
 import { generateGroupCode, isValidZipCode, getExpirationTime } from '../lib/utils';
 import { getUserId, setUserId, getDisplayName, setDisplayName, getDietaryTags, setDietaryTags } from '../lib/storage';
@@ -248,41 +250,27 @@ export default function CreateGroupPage() {
         {/* Form with refined styling */}
         <View className="gap-7">
           {/* Display Name */}
-          <View>
-            <Text className="text-sm font-semibold text-textDark mb-3 tracking-wide uppercase">
-              Your Name
-            </Text>
-            <TextInput
-              className="bg-surface border border-accent-dark rounded-2xl px-5 py-4 text-base text-textDark shadow-soft"
-              placeholder="Enter your name"
-              placeholderTextColor="#9B9490"
-              value={displayName}
-              onChangeText={setDisplayNameState}
-              autoCapitalize="words"
-              maxLength={50}
-            />
-          </View>
+          <Input
+            label="Your Name"
+            placeholder="Enter your name"
+            value={displayName}
+            onChangeText={setDisplayNameState}
+            autoCapitalize="words"
+            maxLength={50}
+            size="lg"
+          />
 
           {/* Zip Code */}
-          <View>
-            <Text className="text-sm font-semibold text-textDark mb-3 tracking-wide uppercase">
-              Location
-            </Text>
-            <TextInput
-              className={`bg-surface border rounded-2xl px-5 py-4 text-base text-textDark shadow-soft ${
-                zipError ? 'border-primary' : 'border-accent-dark'
-              }`}
-              placeholder="Enter zip code (e.g., 10001)"
-              placeholderTextColor="#9B9490"
-              value={zipCode}
-              onChangeText={validateZipCode}
-              keyboardType="numeric"
-              maxLength={5}
-            />
-            {zipError && (
-              <Text className="text-primary text-sm mt-2 font-medium">{zipError}</Text>
-            )}
-          </View>
+          <Input
+            label="Location"
+            placeholder="Enter zip code (e.g., 10001)"
+            value={zipCode}
+            onChangeText={validateZipCode}
+            keyboardType="numeric"
+            maxLength={5}
+            error={zipError}
+            size="lg"
+          />
 
           {/* Radius Slider */}
           <Slider
@@ -304,29 +292,27 @@ export default function CreateGroupPage() {
           />
 
           {/* Create Button with premium styling */}
-          <Pressable
+          <Button
             onPress={handleCreateGroup}
             disabled={loading}
-            className={`bg-primary py-5 rounded-2xl items-center active:scale-95 transition-all shadow-elevated mt-2 ${
-              loading ? 'opacity-60' : ''
-            }`}
+            loading={loading}
+            variant="primary"
+            size="lg"
+            fullWidth
+            className="mt-2"
           >
-            {loading ? (
-              <ActivityIndicator color="#F8F6F1" />
-            ) : (
-              <Text className="text-surface text-base font-semibold tracking-wide">
-                Create Group
-              </Text>
-            )}
-          </Pressable>
+            Create Group
+          </Button>
 
           {/* Cancel with refined style */}
-          <Pressable
-            onPress={() => router.push('/')}
-            className="py-4 items-center"
+          <Button
+            href="/"
+            variant="ghost"
+            size="md"
+            fullWidth
           >
-            <Text className="text-textLight text-base tracking-wide">Cancel</Text>
-          </Pressable>
+            Cancel
+          </Button>
         </View>
 
         {/* Bottom Spacing */}
