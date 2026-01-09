@@ -6,6 +6,7 @@ import { useGroup } from '../../lib/hooks/useGroup';
 import { Avatar } from '../../components/ui/Avatar';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { Badge } from '../../components/ui/Badge';
 import { copyToClipboard, vibrate, formatPriceTier } from '../../lib/utils';
 import { supabase } from '../../lib/supabase';
 import { getUserId, setUserId, getDisplayName, setDisplayName } from '../../lib/storage';
@@ -362,14 +363,14 @@ export default function LobbyPage() {
                     </Text>
                   </View>
                   {isSwiping && (
-                    <View className="bg-success px-2 py-1 rounded-lg">
-                      <Text className="text-white text-xs font-semibold">Swiping</Text>
-                    </View>
+                    <Badge variant="success" size="sm">
+                      Swiping
+                    </Badge>
                   )}
                   {hasFinished && (
-                    <View className="bg-primary px-2 py-1 rounded-lg">
-                      <Text className="text-white text-xs font-semibold">✓ Finished</Text>
-                    </View>
+                    <Badge variant="primary" size="sm" icon="✓">
+                      Finished
+                    </Badge>
                   )}
                 </View>
               );

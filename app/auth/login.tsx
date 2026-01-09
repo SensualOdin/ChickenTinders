@@ -5,6 +5,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../lib/contexts/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { InfoCard } from '../../components/ui/InfoCard';
 import { haptic } from '../../lib/utils';
 
 export default function LoginPage() {
@@ -139,17 +140,17 @@ export default function LoginPage() {
         </Button>
 
         {/* Info Box */}
-        <View className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <Text className="text-sm text-blue-900 font-semibold mb-2">
-            ✨ Benefits of an Account
-          </Text>
-          <Text className="text-sm text-blue-800">
-            • View your past groups and matches{'\n'}
-            • Save your preferences (radius, price){'\n'}
-            • Never lose your group history{'\n'}
-            • Quick group creation with defaults
-          </Text>
-        </View>
+        <InfoCard
+          variant="info"
+          title="Benefits of an Account"
+          emoji="✨"
+          className="mt-8"
+        >
+          • View your past groups and matches{'\n'}
+          • Save your preferences (radius, price){'\n'}
+          • Never lose your group history{'\n'}
+          • Quick group creation with defaults
+        </InfoCard>
       </View>
     </View>
   );

@@ -5,6 +5,8 @@ import { useAuth } from '../lib/contexts/AuthContext';
 import { haptic } from '../lib/utils';
 import { BackButton } from '../components/navigation/BackButton';
 import { Button } from '../components/ui/Button';
+import { Card, CardHeader, CardContent } from '../components/ui/Card';
+import { InfoCard } from '../components/ui/InfoCard';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -52,11 +54,9 @@ export default function AccountPage() {
 
           {/* Guest Info */}
           {profile && (
-            <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
-              <Text className="text-lg font-bold text-textDark mb-3">
-                Current Session
-              </Text>
-              <View className="gap-2">
+            <Card className="mb-4">
+              <CardHeader title="Current Session" />
+              <CardContent>
                 <View>
                   <Text className="text-sm text-gray-500">Display Name</Text>
                   <Text className="text-base font-semibold text-textDark">
@@ -69,15 +69,17 @@ export default function AccountPage() {
                     Guest Account (temporary)
                   </Text>
                 </View>
-              </View>
-            </View>
+              </CardContent>
+            </Card>
           )}
 
           {/* Benefits Card */}
-          <View className="bg-accent/10 border-2 border-accent rounded-2xl p-4 mb-4">
-            <Text className="text-lg font-bold text-accent-dark mb-3">
-              ✨ Create an Account
-            </Text>
+          <InfoCard
+            variant="primary"
+            title="Create an Account"
+            emoji="✨"
+            className="mb-4"
+          >
             <Text className="text-sm text-textDark mb-4">
               Save your groups and preferences by creating a free account.
             </Text>
@@ -95,7 +97,7 @@ export default function AccountPage() {
             >
               {profile ? 'Link Guest Account' : 'Create Account'}
             </Button>
-          </View>
+          </InfoCard>
 
           {/* Already Have Account */}
           <View className="items-center">
@@ -135,11 +137,9 @@ export default function AccountPage() {
         </View>
 
         {/* Profile Info */}
-        <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
-          <Text className="text-lg font-bold text-textDark mb-3">
-            Profile Information
-          </Text>
-          <View className="gap-3">
+        <Card className="mb-4">
+          <CardHeader title="Profile Information" />
+          <CardContent>
             <View>
               <Text className="text-sm text-gray-500">Display Name</Text>
               <Text className="text-base font-semibold text-textDark">
@@ -161,15 +161,13 @@ export default function AccountPage() {
                 </Text>
               </View>
             </View>
-          </View>
-        </View>
+          </CardContent>
+        </Card>
 
         {/* Dietary Preferences */}
         {profile?.dietary_tags && profile.dietary_tags.length > 0 && (
-          <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
-            <Text className="text-lg font-bold text-textDark mb-3">
-              Dietary Preferences
-            </Text>
+          <Card className="mb-4">
+            <CardHeader title="Dietary Preferences" />
             <View className="flex-row flex-wrap gap-2">
               {profile.dietary_tags.map((tag) => (
                 <View
@@ -180,14 +178,12 @@ export default function AccountPage() {
                 </View>
               ))}
             </View>
-          </View>
+          </Card>
         )}
 
         {/* Quick Actions */}
-        <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
-          <Text className="text-lg font-bold text-textDark mb-3">
-            Quick Actions
-          </Text>
+        <Card className="mb-4">
+          <CardHeader title="Quick Actions" />
           <View className="gap-3">
             <Pressable
               onPress={() => router.push('/my-groups')}
@@ -241,7 +237,7 @@ export default function AccountPage() {
               <Text className="text-gray-400">→</Text>
             </Pressable>
           </View>
-        </View>
+        </Card>
 
         {/* Sign Out */}
         <Button
