@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../lib/contexts/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { InfoCard } from '../../components/ui/InfoCard';
+import { Card } from '../../components/ui/Card';
+import { Container } from '../../components/layout/Container';
+import { Stack } from '../../components/layout/Stack';
 import { haptic } from '../../lib/utils';
 
 export default function SignUpPage() {
@@ -80,34 +83,34 @@ export default function SignUpPage() {
   };
 
   return (
-    <View className="flex-1 bg-background">
+    <ScrollView className="flex-1 bg-cream">
       <Toaster position="top-center" />
 
-      <View className="flex-1 max-w-app mx-auto w-full px-4 py-8">
-        {/* Header */}
-        <View className="mb-8">
-          <Button
-            href="/"
-            variant="ghost"
-            size="sm"
-            className="mb-4 self-start -ml-2"
-          >
-            ← Back to Home
-          </Button>
+      <Container size="md" padding="md" className="py-12">
+        <Stack spacing="xl">
+          {/* Brand Section */}
+          <View className="items-center">
+            <Image
+              source={require('../../assets/images/icon.png')}
+              style={{ width: 80, height: 80 }}
+              className="mb-4"
+            />
+            <Text
+              className="text-4xl font-medium text-charcoal mb-2 text-center"
+              style={{ fontFamily: 'Fraunces' }}
+            >
+              {isGuest && profile ? 'Save Your Account' : 'Create Account'}
+            </Text>
+            <Text className="text-base text-textMuted text-center">
+              {isGuest && profile
+                ? 'Link your guest account to never lose your groups'
+                : 'Sign up to save your group history and preferences'}
+            </Text>
+          </View>
 
-          <Text className="text-4xl mb-2">🍗</Text>
-          <Text className="text-3xl font-bold text-primary mb-2">
-            {isGuest && profile ? 'Save Your Account' : 'Create Account'}
-          </Text>
-          <Text className="text-base text-gray-600">
-            {isGuest && profile
-              ? 'Link your guest account to never lose your groups'
-              : 'Sign up to save your group history and preferences'}
-          </Text>
-        </View>
-
-        {/* Form */}
-        <View className="gap-4 mb-6">
+          {/* Form Card */}
+          <Card variant="elevated" padding="lg">
+            <Stack spacing="md">
           <Input
             label="Display Name"
             value={displayName}
@@ -147,68 +150,64 @@ export default function SignUpPage() {
             autoComplete="password-new"
             size="lg"
           />
-        </View>
 
-        {/* Sign Up Button */}
-        <Button
-          onPress={handleSignUp}
-          disabled={loading || authLoading}
-          loading={loading}
-          variant="primary"
-          size="lg"
-          fullWidth
-          className="mb-4"
-        >
-          {isGuest && profile ? 'Link Account' : 'Create Account'}
-        </Button>
+              <Button
+                onPress={handleSignUp}
+                disabled={loading || authLoading}
+                loading={loading}
+                variant="primary"
+                size="lg"
+                fullWidth
+                className="mt-2"
+              >
+                {isGuest && profile ? 'Link Account' : 'Create Account'}
+              </Button>
+            </Stack>
+          </Card>
 
-        {/* Divider */}
-        <View className="flex-row items-center my-6">
-          <View className="flex-1 h-px bg-gray-300" />
-          <Text className="px-4 text-sm text-gray-500">or</Text>
-          <View className="flex-1 h-px bg-gray-300" />
-        </View>
+          {/* Alternative Action */}
+          <View className="items-center">
+            <Text className="text-sm text-textMuted mb-3">
+              Already have an account?
+            </Text>
+            <Button
+              href="/auth/login"
+              variant="outline"
+              size="md"
+            >
+              Sign In
+            </Button>
+          </View>
 
-        {/* Login Link */}
-        <View className="items-center">
-          <Text className="text-sm text-gray-600 mb-3">
-            Already have an account?
-          </Text>
-          <Button
-            href="/auth/login"
-            variant="outline"
-            size="md"
+          {/* Guest Mode Link */}
+          {!profile && (
+            <View className="items-center pt-6 border-t border-cream-dark">
+              <Text className="text-sm text-textMuted mb-3">
+                Just want to try it out?
+              </Text>
+              <Button
+                href="/"
+                variant="ghost"
+                size="sm"
+              >
+                Continue as Guest
+              </Button>
+            </View>
+          )}
+
+          {/* Info Box */}
+          <InfoCard
+            variant="info"
+            title="Account Benefits"
+            emoji="✨"
           >
-            Sign In
-          </Button>
-        </View>
-
-        {/* Continue as Guest */}
-        {!profile && (
-          <Button
-            href="/"
-            variant="ghost"
-            size="md"
-            fullWidth
-            className="mt-6"
-          >
-            Continue as Guest
-          </Button>
-        )}
-
-        {/* Info Box */}
-        <InfoCard
-          variant="info"
-          title="Account Benefits"
-          emoji="✨"
-          className="mt-8"
-        >
-          • Keep your group history forever{'\n'}
-          • Save your food preferences{'\n'}
-          • Quickly create groups with defaults{'\n'}
-          • Access from any device
-        </InfoCard>
-      </View>
-    </View>
+            • Keep your group history forever{'\n'}
+            • Save your food preferences{'\n'}
+            • Quickly create groups with defaults{'\n'}
+            • Access from any device
+          </InfoCard>
+        </Stack>
+      </Container>
+    </ScrollView>
   );
 }
