@@ -1,0 +1,68 @@
+# Security Headers for Netlify/Vercel
+# This file configures security headers for production deployment
+
+/*
+  # Security Headers
+
+  # Prevent clickjacking attacks
+  X-Frame-Options: DENY
+
+  # Prevent MIME type sniffing
+  X-Content-Type-Options: nosniff
+
+  # Enable XSS protection in older browsers
+  X-XSS-Protection: 1; mode=block
+
+  # Referrer Policy - only send origin on cross-origin requests
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Permissions Policy - disable unnecessary browser features
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=()
+
+  # Content Security Policy (CSP)
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://app.posthog.com https://o*.ingest.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+  # Strict Transport Security - force HTTPS (31536000 = 1 year)
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+  # Cache Control for HTML
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# CSS and JavaScript files (with hash in filename)
+/*.css
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images
+/*.jpg
+  Cache-Control: public, max-age=31536000
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000
+
+/*.png
+  Cache-Control: public, max-age=31536000
+
+/*.gif
+  Cache-Control: public, max-age=31536000
+
+/*.webp
+  Cache-Control: public, max-age=31536000
+
+/*.svg
+  Cache-Control: public, max-age=31536000
+
+# Fonts
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.otf
+  Cache-Control: public, max-age=31536000, immutable
