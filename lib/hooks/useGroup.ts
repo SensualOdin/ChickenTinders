@@ -15,10 +15,15 @@ export function useGroup(groupId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Log whenever members changes
+  useEffect(() => {
+    console.log('Members state updated:', members.length, 'members');
+  }, [members]);
+
   useEffect(() => {
     if (!groupId) return;
 
-    // Fetch group and members
+    // Fetch group and members (with loading state)
     const fetchGroupData = async () => {
       try {
         setLoading(true);
@@ -54,6 +59,31 @@ export function useGroup(groupId: string) {
       }
     };
 
+    // Refetch members only (without loading state for real-time updates)
+    const refetchMembersOnly = async () => {
+      try {
+        console.log('Refetching members data...');
+        const { data: membersData, error: membersError } = await supabase
+          .from('group_members')
+          .select(`
+            *,
+            user:users(*)
+          `)
+          .eq('group_id', groupId)
+          .order('joined_at', { ascending: true });
+
+        if (membersError) {
+          console.error('Error refetching members:', membersError);
+          throw membersError;
+        }
+
+        console.log('Refetch successful:', membersData?.length, 'members');
+        setMembers(membersData || []);
+      } catch (err: any) {
+        console.error('Error in refetchMembersOnly:', err);
+      }
+    };
+
     fetchGroupData();
 
     // Subscribe to real-time changes for group_members
@@ -67,30 +97,14 @@ export function useGroup(groupId: string) {
           table: 'group_members',
           filter: `group_id=eq.${groupId}`,
         },
-        async (payload) => {
+        (payload) => {
           console.log('Real-time update for group_members:', payload);
 
           // Refetch members when changes occur
-          console.log('Refetching members for group:', groupId);
-          const { data: membersData, error: refetchError } = await supabase
-            .from('group_members')
-            .select(`
-              *,
-              user:users(*)
-            `)
-            .eq('group_id', groupId)
-            .order('joined_at', { ascending: true });
-
-          console.log('Refetch result:', { data: membersData, error: refetchError });
-
-          if (refetchError) {
-            console.error('Error refetching members:', refetchError);
-          } else if (membersData) {
-            console.log('Updated members list:', membersData.length, 'members');
-            setMembers(membersData);
-          } else {
-            console.warn('No members data returned from refetch');
-          }
+          console.log('Triggering refetch for group:', groupId);
+          refetchMembersOnly().catch((err) => {
+            console.error('Error in refetch:', err);
+          });
         }
       )
       .subscribe((status) => {
