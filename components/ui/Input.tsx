@@ -2,7 +2,8 @@ import { View, Text, TextInput, TextInputProps } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 import { FontAwesome } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 const inputVariants = cva(
   'bg-white border-2 rounded-xl px-4 py-4 text-lg text-textDark transition-colors',
@@ -46,8 +47,28 @@ export function Input({
   ...props
 }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const borderScale = useSharedValue(1);
+  const glowOpacity = useSharedValue(0);
 
   const variant = error ? 'error' : 'default';
+
+  useEffect(() => {
+    if (isFocused) {
+      borderScale.value = withSpring(1.01, { damping: 15, stiffness: 150 });
+      glowOpacity.value = withSpring(1, { damping: 15, stiffness: 150 });
+    } else {
+      borderScale.value = withSpring(1, { damping: 15, stiffness: 150 });
+      glowOpacity.value = withSpring(0, { damping: 15, stiffness: 150 });
+    }
+  }, [isFocused]);
+
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: borderScale.value }],
+  }));
+
+  const animatedGlowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
+  }));
 
   return (
     <View className="w-full">
@@ -57,7 +78,16 @@ export function Input({
         </Text>
       )}
 
-      <View className="relative">
+      <Animated.View style={animatedContainerStyle} className="relative">
+        {/* Focus glow effect */}
+        <Animated.View
+          style={animatedGlowStyle}
+          className="absolute inset-0 -m-1 rounded-xl pointer-events-none"
+          pointerEvents="none"
+        >
+          <View className="absolute inset-0 rounded-xl bg-primary/10" />
+        </Animated.View>
+
         {leftIcon && (
           <View className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
             <FontAwesome
@@ -96,7 +126,7 @@ export function Input({
             />
           </View>
         )}
-      </View>
+      </Animated.View>
 
       {error && (
         <Text className="text-xs text-error mt-1">

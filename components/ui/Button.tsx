@@ -111,7 +111,10 @@ export function Button({
       )}
     >
       {loading ? (
-        <ActivityIndicator color={iconColor} />
+        <View className="flex-row items-center gap-2">
+          <ActivityIndicator color={iconColor} size="small" />
+          <Text className={cn(textVariants({ variant, size }))}>Loading...</Text>
+        </View>
       ) : (
         <View className="flex-row items-center gap-2">
           {icon && iconPosition === 'left' && (

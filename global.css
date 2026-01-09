@@ -45,3 +45,83 @@ html, body {
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* Micro-interactions: Button hover states (web only) */
+@media (hover: hover) {
+  /* Primary button hover */
+  button[class*="bg-primary"]:hover:not(:disabled),
+  a[class*="bg-primary"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 48px rgba(169, 29, 58, 0.3);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Secondary button hover */
+  button[class*="bg-secondary"]:hover:not(:disabled),
+  a[class*="bg-secondary"]:hover {
+    background-color: #FFB800;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(255, 184, 0, 0.25);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Outline button hover */
+  button[class*="border-primary"]:hover:not(:disabled),
+  a[class*="border-primary"]:hover {
+    background-color: rgba(169, 29, 58, 0.05);
+    border-color: #C72C4A;
+    transform: translateY(-1px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Ghost button hover */
+  button[class*="bg-transparent"]:hover:not(:disabled),
+  a[class*="bg-transparent"]:hover {
+    background-color: rgba(169, 29, 58, 0.08);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Card hover lift */
+  [class*="rounded-2xl"][class*="shadow"]:hover,
+  [class*="rounded-xl"][class*="shadow"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Input focus enhancements */
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #A91D3A;
+    box-shadow: 0 0 0 4px rgba(169, 29, 58, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Active/pressed states for touch devices */
+button:active:not(:disabled),
+a:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* Smooth transitions for all interactive elements */
+button,
+a,
+input,
+textarea,
+[role="button"] {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Loading state animations */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
