@@ -19,6 +19,7 @@ export default function LobbyPage() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [tempName, setTempName] = useState('');
   const [swipeProgress, setSwipeProgress] = useState<Record<string, number>>({});
+  const [onlineMembers, setOnlineMembers] = useState<Set<string>>(new Set());
 
   // Check if current user is in the group, if not prompt to join
   useEffect(() => {
@@ -139,6 +140,60 @@ export default function LobbyPage() {
       subscription.unsubscribe();
     };
   }, [id, members, router]);
+
+  // Presence tracking - track who's online
+  useEffect(() => {
+    if (!id) return;
+
+    const initPresence = async () => {
+      const userId = await getUserId();
+      if (!userId) return;
+
+      const channel = supabase.channel(`lobby-presence-${id}`, {
+        config: {
+          presence: {
+            key: userId,
+          },
+        },
+      });
+
+      channel
+        .on('presence', { event: 'sync' }, () => {
+          const state = channel.presenceState();
+          const online = new Set(Object.keys(state));
+          setOnlineMembers(online);
+        })
+        .on('presence', { event: 'join' }, ({ key }) => {
+          console.log('User joined:', key);
+          setOnlineMembers((prev) => new Set([...prev, key]));
+        })
+        .on('presence', { event: 'leave' }, ({ key }) => {
+          console.log('User left:', key);
+          setOnlineMembers((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(key);
+            return newSet;
+          });
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            // Track our presence
+            await channel.track({
+              online_at: new Date().toISOString(),
+            });
+          }
+        });
+
+      return () => {
+        channel.unsubscribe();
+      };
+    };
+
+    const cleanup = initPresence();
+    return () => {
+      cleanup.then((fn) => fn?.());
+    };
+  }, [id]);
 
   const joinGroup = async (userId: string) => {
     if (!id || joining) return;
@@ -347,19 +402,34 @@ export default function LobbyPage() {
               const hasFinished = swipeCount >= totalRestaurants && swipeCount > 0;
               const isSwiping = swipeCount > 0 && !hasFinished;
 
+              const isOnline = onlineMembers.has(member.user_id);
+
               return (
                 <View key={member.id} className="flex-row items-center gap-3">
-                  <Avatar name={member.user.display_name} size="medium" />
+                  {/* Avatar with online indicator */}
+                  <View className="relative">
+                    <Avatar name={member.user.display_name} size="medium" />
+                    {isOnline && (
+                      <View className="absolute bottom-0 right-0 w-3 h-3 bg-success border-2 border-white rounded-full" />
+                    )}
+                  </View>
                   <View className="flex-1">
-                    <Text className="text-base font-semibold text-textDark">
-                      {member.user.display_name}
-                    </Text>
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-base font-semibold text-textDark">
+                        {member.user.display_name}
+                      </Text>
+                      {isOnline && (
+                        <View className="w-2 h-2 bg-success rounded-full" />
+                      )}
+                    </View>
                     <Text className="text-sm text-gray-500">
                       {hasFinished
                         ? 'Done swiping'
                         : isSwiping
                           ? `${swipeCount} swipes`
-                          : 'Waiting to start...'}
+                          : isOnline
+                            ? 'Online'
+                            : 'Offline'}
                     </Text>
                   </View>
                   {isSwiping && (
