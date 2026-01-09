@@ -21,6 +21,7 @@ export default function LobbyPage() {
   const [tempName, setTempName] = useState('');
   const [swipeProgress, setSwipeProgress] = useState<Record<string, number>>({});
   const [onlineMembers, setOnlineMembers] = useState<Set<string>>(new Set());
+  const [userFinished, setUserFinished] = useState(false);
 
   // Check if current user is in the group, if not prompt to join
   useEffect(() => {
@@ -364,8 +365,6 @@ export default function LobbyPage() {
   const canStartSwiping = members.length >= 2;
 
   // Check if current user has finished swiping
-  const [userFinished, setUserFinished] = useState(false);
-
   useEffect(() => {
     const checkFinished = async () => {
       const userId = await getUserId();
