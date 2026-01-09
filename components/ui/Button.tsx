@@ -95,7 +95,8 @@ export function Button({
   const isDisabled = disabled || loading;
 
   const iconColor =
-    variant === 'outline' || variant === 'ghost' ? '#A91D3A' : '#FFFFFF';
+    variant === 'outline' || variant === 'ghost' ? '#A91D3A' :
+    variant === 'secondary' ? '#2C0A0A' : '#FFFFFF';
 
   return (
     <Pressable
@@ -110,9 +111,7 @@ export function Button({
       )}
     >
       {loading ? (
-        <ActivityIndicator
-          color={variant === 'outline' || variant === 'ghost' ? '#A91D3A' : '#FFFFFF'}
-        />
+        <ActivityIndicator color={iconColor} />
       ) : (
         <View className="flex-row items-center gap-2">
           {icon && iconPosition === 'left' && (

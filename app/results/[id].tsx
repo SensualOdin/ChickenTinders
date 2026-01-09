@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Image, Linking } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Image, Linking, Share } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useGroup } from '../../lib/hooks/useGroup';
 import { detectMatches, saveMatches, getMatches, MatchResult } from '../../lib/utils/matches';
 import { getMockRestaurants } from '../../lib/api/mock-restaurants';
 import { ConfettiCelebration } from '../../components/animations/ConfettiCelebration';
+import { AnimatedCounter } from '../../components/animations/AnimatedCounter';
 import { ResultsCardSkeleton } from '../../components/ui/LoadingSkeleton';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -14,6 +16,7 @@ import { Container } from '../../components/layout/Container';
 import { Stack } from '../../components/layout/Stack';
 import { supabase } from '../../lib/supabase';
 import { Avatar } from '../../components/ui/Avatar';
+import { haptic } from '../../lib/utils';
 
 type SwipeStatus = {
   user_id: string;
@@ -200,6 +203,26 @@ export default function ResultsPage() {
     }
   };
 
+  const handleShare = async () => {
+    try {
+      const matchList = matches
+        .map((m) => `• ${m.restaurant_data.name}`)
+        .join('\n');
+
+      const message = `We found ${matches.length} ${matches.length === 1 ? 'match' : 'matches'} on ChickenTinders! 🎉\n\n${matchList}`;
+
+      await Share.share({
+        message,
+        title: 'ChickenTinders Match Results',
+      });
+
+      haptic.light();
+    } catch (error: any) {
+      console.error('Error sharing:', error);
+      // User cancelled or error occurred
+    }
+  };
+
   // Show loading only if we haven't loaded initial status yet or if we're detecting matches
   if (!initialLoadComplete || (loading && allMembersFinished)) {
     return (
@@ -339,18 +362,36 @@ export default function ResultsPage() {
         {/* Celebration Header */}
         <View className="items-center mb-6">
           <Text className="text-6xl mb-4">🎉</Text>
-          <Text className="text-3xl font-bold text-primary mb-2">
-            {matches.length} {matches.length === 1 ? 'Match' : 'Matches'} Found!
-          </Text>
-          <Text className="text-base text-gray-600">
+          <View className="flex-row items-baseline gap-2 mb-2">
+            <AnimatedCounter
+              end={matches.length}
+              className="text-3xl font-bold text-primary"
+              duration={1200}
+            />
+            <Text className="text-3xl font-bold text-primary">
+              {matches.length === 1 ? 'Match' : 'Matches'} Found!
+            </Text>
+          </View>
+          <Text className="text-base text-gray-600 mb-4">
             {members.length} {members.length === 1 ? 'person' : 'people'} agreed on {matches.length} {matches.length === 1 ? 'restaurant' : 'restaurants'}
           </Text>
+
+          {/* Share Button */}
+          <Button
+            onPress={handleShare}
+            variant="secondary"
+            size="md"
+            icon="share-alt"
+          >
+            Share Results
+          </Button>
         </View>
 
         {/* All Matches */}
         {matches.map((match, index) => (
-          <View
+          <Animated.View
             key={match.restaurant_id}
+            entering={FadeInDown.delay(index * 150).duration(600)}
             className="bg-white rounded-2xl overflow-hidden shadow-lg mb-4"
           >
             {/* Badge for unanimous matches */}
@@ -420,7 +461,7 @@ export default function ResultsPage() {
                 Get Directions
               </Button>
             </View>
-          </View>
+          </Animated.View>
         ))}
 
         {/* Create New Group */}
