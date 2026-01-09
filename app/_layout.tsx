@@ -20,6 +20,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { initSentry, captureError } from '../lib/monitoring/sentry';
 import { initAnalytics } from '../lib/monitoring/analytics';
+import { initPerformanceMonitoring } from '../lib/utils/performance';
 
 // Prevent auto-hiding splash screen
 SplashScreen.preventAutoHideAsync();
@@ -27,6 +28,7 @@ SplashScreen.preventAutoHideAsync();
 // Initialize monitoring services
 initSentry();
 initAnalytics();
+initPerformanceMonitoring();
 
 // Error Fallback Component
 function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
