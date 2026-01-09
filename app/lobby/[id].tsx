@@ -145,53 +145,69 @@ export default function LobbyPage() {
   useEffect(() => {
     if (!id) return;
 
+    let channel: any = null;
+
     const initPresence = async () => {
-      const userId = await getUserId();
-      if (!userId) return;
+      try {
+        const userId = await getUserId();
+        if (!userId) {
+          console.log('No userId for presence tracking');
+          return;
+        }
 
-      const channel = supabase.channel(`lobby-presence-${id}`, {
-        config: {
-          presence: {
-            key: userId,
+        console.log('Initializing presence for user:', userId);
+
+        channel = supabase.channel(`lobby-presence-${id}`, {
+          config: {
+            presence: {
+              key: userId,
+            },
           },
-        },
-      });
-
-      channel
-        .on('presence', { event: 'sync' }, () => {
-          const state = channel.presenceState();
-          const online = new Set(Object.keys(state));
-          setOnlineMembers(online);
-        })
-        .on('presence', { event: 'join' }, ({ key }) => {
-          console.log('User joined:', key);
-          setOnlineMembers((prev) => new Set([...prev, key]));
-        })
-        .on('presence', { event: 'leave' }, ({ key }) => {
-          console.log('User left:', key);
-          setOnlineMembers((prev) => {
-            const newSet = new Set(prev);
-            newSet.delete(key);
-            return newSet;
-          });
-        })
-        .subscribe(async (status) => {
-          if (status === 'SUBSCRIBED') {
-            // Track our presence
-            await channel.track({
-              online_at: new Date().toISOString(),
-            });
-          }
         });
 
-      return () => {
-        channel.unsubscribe();
-      };
+        channel
+          .on('presence', { event: 'sync' }, () => {
+            const state = channel.presenceState();
+            console.log('Presence sync:', state);
+            const online = new Set(Object.keys(state));
+            console.log('Online members:', Array.from(online));
+            setOnlineMembers(online);
+          })
+          .on('presence', { event: 'join' }, ({ key }) => {
+            console.log('User joined:', key);
+            setOnlineMembers((prev) => new Set([...prev, key]));
+          })
+          .on('presence', { event: 'leave' }, ({ key }) => {
+            console.log('User left:', key);
+            setOnlineMembers((prev) => {
+              const newSet = new Set(prev);
+              newSet.delete(key);
+              return newSet;
+            });
+          })
+          .subscribe(async (status) => {
+            console.log('Presence subscription status:', status);
+            if (status === 'SUBSCRIBED') {
+              // Track our presence
+              const trackResult = await channel.track({
+                online_at: new Date().toISOString(),
+                user_id: userId,
+              });
+              console.log('Presence tracked:', trackResult);
+            }
+          });
+      } catch (error) {
+        console.error('Error initializing presence:', error);
+      }
     };
 
-    const cleanup = initPresence();
+    initPresence();
+
     return () => {
-      cleanup.then((fn) => fn?.());
+      if (channel) {
+        console.log('Unsubscribing from presence channel');
+        channel.unsubscribe();
+      }
     };
   }, [id]);
 
