@@ -71,6 +71,7 @@ export function useGroup(groupId: string) {
           console.log('Real-time update for group_members:', payload);
 
           // Refetch members when changes occur
+          console.log('Refetching members for group:', groupId);
           const { data: membersData, error: refetchError } = await supabase
             .from('group_members')
             .select(`
@@ -80,11 +81,15 @@ export function useGroup(groupId: string) {
             .eq('group_id', groupId)
             .order('joined_at', { ascending: true });
 
+          console.log('Refetch result:', { data: membersData, error: refetchError });
+
           if (refetchError) {
             console.error('Error refetching members:', refetchError);
           } else if (membersData) {
             console.log('Updated members list:', membersData.length, 'members');
             setMembers(membersData);
+          } else {
+            console.warn('No members data returned from refetch');
           }
         }
       )
