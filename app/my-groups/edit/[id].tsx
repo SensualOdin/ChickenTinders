@@ -14,6 +14,8 @@ import {
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import { Card } from '../../../components/ui/Card';
+import { PageHeader } from '../../../components/layout/Header';
+import { Container } from '../../../components/layout/Container';
 import { haptic } from '../../../lib/utils';
 
 type Member = SavedGroupMember & { _isNew?: boolean };
@@ -165,25 +167,12 @@ export default function EditSavedGroupPage() {
       <Toaster position="top-center" />
 
       <ScrollView className="flex-1">
-        <View className="max-w-app mx-auto w-full px-6 py-8">
-          {/* Header */}
-          <View className="mb-8">
-            <Button
-              href="/my-groups"
-              variant="ghost"
-              size="sm"
-              className="mb-4 self-start -ml-2"
-            >
-              ← Back to My Groups
-            </Button>
-
-            <Text className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Playfair Display' }}>
-              Edit Group
-            </Text>
-            <Text className="text-textMuted text-base">
-              Update your saved group name and members
-            </Text>
-          </View>
+        <Container padding="lg" className="py-8">
+          <PageHeader
+            title="Edit Group"
+            subtitle="Update your saved group name and members"
+            backButton={{ label: "Back to My Groups", href: "/my-groups" }}
+          />
 
           {/* Form */}
           <View className="gap-6">
@@ -276,7 +265,7 @@ export default function EditSavedGroupPage() {
               Cancel
             </Button>
           </View>
-        </View>
+        </Container>
       </ScrollView>
     </View>
   );

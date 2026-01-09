@@ -8,6 +8,8 @@ import { BackButton } from '../components/navigation/BackButton';
 import { Button } from '../components/ui/Button';
 import { Card, CardHeader, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
+import { PageHeader } from '../components/layout/Header';
+import { Container } from '../components/layout/Container';
 import { haptic } from '../lib/utils';
 
 export default function MyGroupsPage() {
@@ -95,25 +97,12 @@ export default function MyGroupsPage() {
       <Toaster position="top-center" />
 
       <ScrollView className="flex-1">
-        <View className="max-w-app mx-auto w-full px-6 py-8">
-          {/* Header */}
-          <View className="mb-8">
-            <Button
-              href="/account"
-              variant="ghost"
-              size="sm"
-              className="mb-4 self-start -ml-2"
-            >
-              ← Back to Account
-            </Button>
-
-            <Text className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Playfair Display' }}>
-              My Groups
-            </Text>
-            <Text className="text-textMuted text-base">
-              Save your regular dining crews and quickly start new sessions. Each session creates a shareable group code.
-            </Text>
-          </View>
+        <Container padding="lg" className="py-8">
+          <PageHeader
+            title="My Groups"
+            subtitle="Save your regular dining crews and quickly start new sessions. Each session creates a shareable group code."
+            backButton={{ label: "Back to Account", href: "/account" }}
+          />
 
           {/* Create New Group Button */}
           <Button
@@ -211,7 +200,7 @@ export default function MyGroupsPage() {
               ))}
             </View>
           )}
-        </View>
+        </Container>
       </ScrollView>
     </View>
   );

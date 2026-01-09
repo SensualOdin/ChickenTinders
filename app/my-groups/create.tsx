@@ -7,6 +7,8 @@ import { createSavedGroup } from '../../lib/api/savedGroups';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
+import { PageHeader } from '../../components/layout/Header';
+import { Container } from '../../components/layout/Container';
 import { haptic } from '../../lib/utils';
 
 type Member = {
@@ -107,25 +109,12 @@ export default function CreateSavedGroupPage() {
       <Toaster position="top-center" />
 
       <ScrollView className="flex-1">
-        <View className="max-w-app mx-auto w-full px-6 py-8">
-          {/* Header */}
-          <View className="mb-8">
-            <Button
-              href="/my-groups"
-              variant="ghost"
-              size="sm"
-              className="mb-4 self-start -ml-2"
-            >
-              ← Back to My Groups
-            </Button>
-
-            <Text className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Playfair Display' }}>
-              Create Group
-            </Text>
-            <Text className="text-textMuted text-base">
-              Save a group for quick session starts
-            </Text>
-          </View>
+        <Container padding="lg" className="py-8">
+          <PageHeader
+            title="Create Group"
+            subtitle="Save a group for quick session starts"
+            backButton={{ label: "Back to My Groups", href: "/my-groups" }}
+          />
 
           {/* Form */}
           <View className="gap-6">
@@ -206,7 +195,7 @@ export default function CreateSavedGroupPage() {
               Create Group
             </Button>
           </View>
-        </View>
+        </Container>
       </ScrollView>
     </View>
   );
