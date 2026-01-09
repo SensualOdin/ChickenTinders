@@ -10,6 +10,8 @@ import { ResultsCardSkeleton } from '../../components/ui/LoadingSkeleton';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { InfoCard } from '../../components/ui/InfoCard';
+import { Container } from '../../components/layout/Container';
+import { Stack } from '../../components/layout/Stack';
 import { supabase } from '../../lib/supabase';
 import { Avatar } from '../../components/ui/Avatar';
 
@@ -203,7 +205,7 @@ export default function ResultsPage() {
     return (
       <ScrollView className="flex-1 bg-background">
         <Toaster position="top-center" />
-        <View className="max-w-app mx-auto w-full px-4 py-6">
+        <Container padding="md" className="py-6">
           <View className="items-center mb-6">
             <ActivityIndicator size="large" color="#E53935" />
             <Text className="text-gray-600 mt-4">
@@ -212,7 +214,7 @@ export default function ResultsPage() {
           </View>
           <ResultsCardSkeleton />
           <ResultsCardSkeleton />
-        </View>
+        </Container>
       </ScrollView>
     );
   }
@@ -228,7 +230,7 @@ export default function ResultsPage() {
       return (
         <ScrollView className="flex-1 bg-background">
           <Toaster position="top-center" />
-          <View className="max-w-app mx-auto w-full px-4 py-8">
+          <Container padding="md" className="py-8">
             <View className="items-center mb-8">
               <Text className="text-6xl mb-4">⏳</Text>
               <Text className="text-2xl font-bold text-textDark mb-2 text-center">
@@ -289,7 +291,7 @@ export default function ResultsPage() {
               This page will automatically refresh when everyone finishes swiping.
               No need to manually reload!
             </InfoCard>
-          </View>
+          </Container>
         </ScrollView>
       );
     }
@@ -298,20 +300,30 @@ export default function ResultsPage() {
     return (
       <View className="flex-1 bg-background items-center justify-center px-4">
         <Toaster position="top-center" />
-        <Text className="text-6xl mb-4">😕</Text>
-        <Text className="text-2xl font-bold text-textDark mb-2 text-center">
-          No Matches Found
-        </Text>
-        <Text className="text-base text-gray-600 text-center mb-6">
-          You and your friends didn't match on any restaurants. Try again with different preferences!
-        </Text>
-        <Button
-          href="/"
-          variant="primary"
-          size="md"
-        >
-          Create New Group
-        </Button>
+        <Container size="md" className="items-center">
+          <Stack spacing="lg" className="items-center">
+            <Text className="text-8xl">😕</Text>
+            <View>
+              <Text className="text-3xl font-bold text-textDark mb-2 text-center">
+                No Matches Found
+              </Text>
+              <Text className="text-base text-textMuted text-center">
+                You and your friends didn't match on any restaurants.
+              </Text>
+            </View>
+            <InfoCard variant="warning" emoji="💡" title="Tip" className="w-full">
+              Try adjusting your search radius, price preferences, or dietary restrictions to find more options everyone can agree on.
+            </InfoCard>
+            <Button
+              href="/"
+              variant="primary"
+              size="lg"
+              fullWidth
+            >
+              Start New Group
+            </Button>
+          </Stack>
+        </Container>
       </View>
     );
   }
@@ -323,7 +335,7 @@ export default function ResultsPage() {
     <ScrollView className="flex-1 bg-background">
       <Toaster position="top-center" />
       {showConfetti && <ConfettiCelebration />}
-      <View className="max-w-app mx-auto w-full px-4 py-6">
+      <Container padding="md" className="py-6">
         {/* Celebration Header */}
         <View className="items-center mb-6">
           <Text className="text-6xl mb-4">🎉</Text>
@@ -425,7 +437,7 @@ export default function ResultsPage() {
             Create New Group
           </Button>
         </View>
-      </View>
+      </Container>
     </ScrollView>
   );
 }
