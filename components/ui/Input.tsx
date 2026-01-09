@@ -33,6 +33,7 @@ export interface InputProps extends Omit<TextInputProps, 'className'> {
   leftIcon?: keyof typeof FontAwesome.glyphMap;
   rightIcon?: keyof typeof FontAwesome.glyphMap;
   size?: 'sm' | 'md' | 'lg';
+  required?: boolean;
   className?: string;
 }
 
@@ -43,6 +44,7 @@ export function Input({
   leftIcon,
   rightIcon,
   size = 'lg',
+  required = false,
   className,
   ...props
 }: InputProps) {
@@ -74,7 +76,7 @@ export function Input({
     <View className="w-full">
       {label && (
         <Text className="text-sm font-semibold text-textDark mb-2">
-          {label}
+          {label}{required && <Text className="text-error"> *</Text>}
         </Text>
       )}
 
@@ -109,6 +111,9 @@ export function Input({
             props.onBlur?.(e);
           }}
           placeholderTextColor="#9CA3AF"
+          accessibilityLabel={props.accessibilityLabel || label}
+          accessibilityRequired={required}
+          accessibilityInvalid={!!error}
           className={cn(
             inputVariants({ variant, size }),
             leftIcon && 'pl-12',
@@ -129,7 +134,11 @@ export function Input({
       </Animated.View>
 
       {error && (
-        <Text className="text-xs text-error mt-1">
+        <Text
+          className="text-xs text-error mt-1"
+          accessibilityLiveRegion="polite"
+          accessibilityRole="alert"
+        >
           {error}
         </Text>
       )}

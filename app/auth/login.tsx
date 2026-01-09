@@ -60,6 +60,8 @@ export default function LoginPage() {
               source={require('../../assets/images/icon.png')}
               style={{ width: 80, height: 80 }}
               className="mb-4"
+              accessibilityLabel="ChickenTinders logo"
+              accessibilityRole="image"
             />
             <Text
               className="text-4xl font-medium text-charcoal mb-2 text-center"

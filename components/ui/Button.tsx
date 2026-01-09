@@ -63,6 +63,7 @@ export interface ButtonProps extends VariantProps<typeof buttonVariants> {
   icon?: keyof typeof FontAwesome.glyphMap;
   iconPosition?: 'left' | 'right';
   accessibilityLabel?: string;
+  accessibilityHint?: string;
   className?: string;
 }
 
@@ -78,6 +79,7 @@ export function Button({
   size,
   fullWidth,
   accessibilityLabel,
+  accessibilityHint,
   className,
 }: ButtonProps) {
   const router = useRouter();
@@ -103,7 +105,9 @@ export function Button({
       onPress={handlePress}
       disabled={isDisabled}
       accessibilityLabel={accessibilityLabel || children}
+      accessibilityHint={accessibilityHint}
       accessibilityRole="button"
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
       className={cn(
         buttonVariants({ variant, size, fullWidth }),
         isDisabled && 'opacity-50',
