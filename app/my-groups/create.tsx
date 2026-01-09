@@ -6,6 +6,7 @@ import { useAuth } from '../../lib/contexts/AuthContext';
 import { createSavedGroup } from '../../lib/api/savedGroups';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { Card } from '../../components/ui/Card';
 import { haptic } from '../../lib/utils';
 
 type Member = {
@@ -167,7 +168,7 @@ export default function CreateSavedGroupPage() {
 
               {/* Members List */}
               {members.length > 0 ? (
-                <View className="bg-surface border border-accent/20 rounded-xl p-4 gap-2">
+                <Card variant="surface" padding="md" className="gap-2">
                   {members.map((member) => (
                     <View
                       key={member.id}
@@ -182,13 +183,13 @@ export default function CreateSavedGroupPage() {
                       </Pressable>
                     </View>
                   ))}
-                </View>
+                </Card>
               ) : (
-                <View className="bg-surface border border-accent/20 rounded-xl p-6">
+                <Card variant="surface" padding="lg" className="items-center">
                   <Text className="text-textMuted text-center text-sm">
                     No members added yet
                   </Text>
-                </View>
+                </Card>
               )}
             </View>
 

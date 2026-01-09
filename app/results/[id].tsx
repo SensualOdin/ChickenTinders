@@ -8,6 +8,8 @@ import { getMockRestaurants } from '../../lib/api/mock-restaurants';
 import { ConfettiCelebration } from '../../components/animations/ConfettiCelebration';
 import { ResultsCardSkeleton } from '../../components/ui/LoadingSkeleton';
 import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
+import { InfoCard } from '../../components/ui/InfoCard';
 import { supabase } from '../../lib/supabase';
 import { Avatar } from '../../components/ui/Avatar';
 
@@ -238,7 +240,7 @@ export default function ResultsPage() {
             </View>
 
             {/* Progress Card */}
-            <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+            <Card variant="default" padding="md" className="mb-4">
               <Text className="text-lg font-bold text-textDark mb-3">
                 Swipe Progress
               </Text>
@@ -276,18 +278,17 @@ export default function ResultsPage() {
                   </View>
                 ))}
               </View>
-            </View>
+            </Card>
 
             {/* Info Box */}
-            <View className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <Text className="text-sm text-blue-900 font-semibold mb-2">
-                💡 Tip
-              </Text>
-              <Text className="text-sm text-blue-800">
-                This page will automatically refresh when everyone finishes swiping.
-                No need to manually reload!
-              </Text>
-            </View>
+            <InfoCard
+              variant="info"
+              title="Tip"
+              emoji="💡"
+            >
+              This page will automatically refresh when everyone finishes swiping.
+              No need to manually reload!
+            </InfoCard>
           </View>
         </ScrollView>
       );

@@ -6,6 +6,8 @@ import { useAuth } from '../lib/contexts/AuthContext';
 import { getSavedGroups, deleteSavedGroup, SavedGroup } from '../lib/api/savedGroups';
 import { BackButton } from '../components/navigation/BackButton';
 import { Button } from '../components/ui/Button';
+import { Card, CardHeader, CardContent } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
 import { haptic } from '../lib/utils';
 
 export default function MyGroupsPage() {
@@ -126,7 +128,7 @@ export default function MyGroupsPage() {
 
           {/* Groups List */}
           {groups.length === 0 ? (
-            <View className="bg-surface rounded-2xl p-8 shadow-soft border border-accent/10">
+            <Card variant="surface" padding="lg" className="items-center">
               <Text className="text-6xl text-center mb-4">🍽️</Text>
               <Text className="text-xl font-semibold text-textDark text-center mb-2">
                 No saved groups yet
@@ -134,33 +136,30 @@ export default function MyGroupsPage() {
               <Text className="text-textMuted text-center">
                 Create a group to quickly start sessions with your regular dining crew
               </Text>
-            </View>
+            </Card>
           ) : (
             <View className="gap-4">
               {groups.map((group) => (
-                <View
+                <Card
                   key={group.id}
-                  className="bg-surface rounded-2xl p-6 shadow-card border border-accent/10"
+                  variant="elevated"
+                  padding="lg"
                 >
                   {/* Group Header */}
-                  <View className="flex-row justify-between items-start mb-4">
-                    <View className="flex-1">
-                      <Text className="text-2xl font-bold text-primary mb-1" style={{ fontFamily: 'Playfair Display' }}>
-                        {group.name}
-                      </Text>
-                      <Text className="text-textMuted text-sm">
-                        {group.members?.length || 0} members
-                      </Text>
-                    </View>
-                    <Button
-                      href={`/my-groups/edit/${group.id}`}
-                      variant="outline"
-                      size="sm"
-                      className="bg-accent/10 border-0"
-                    >
-                      Edit
-                    </Button>
-                  </View>
+                  <CardHeader
+                    title={group.name}
+                    subtitle={`${group.members?.length || 0} members`}
+                    action={
+                      <Button
+                        href={`/my-groups/edit/${group.id}`}
+                        variant="outline"
+                        size="sm"
+                        className="bg-accent/10 border-0"
+                      >
+                        Edit
+                      </Button>
+                    }
+                  />
 
                   {/* Members Preview */}
                   {group.members && group.members.length > 0 && (
@@ -170,21 +169,18 @@ export default function MyGroupsPage() {
                       </Text>
                       <View className="flex-row flex-wrap gap-2">
                         {group.members.slice(0, 5).map((member) => (
-                          <View
+                          <Badge
                             key={member.id}
-                            className="bg-secondary/10 px-3 py-1.5 rounded-full"
+                            variant="secondary"
+                            size="md"
                           >
-                            <Text className="text-textDark text-sm">
-                              {member.display_name}
-                            </Text>
-                          </View>
+                            {member.display_name}
+                          </Badge>
                         ))}
                         {group.members.length > 5 && (
-                          <View className="bg-accent/10 px-3 py-1.5 rounded-full">
-                            <Text className="text-accent text-sm">
-                              +{group.members.length - 5} more
-                            </Text>
-                          </View>
+                          <Badge variant="default" size="md">
+                            +{group.members.length - 5} more
+                          </Badge>
                         )}
                       </View>
                     </View>
@@ -211,7 +207,7 @@ export default function MyGroupsPage() {
                       🗑️
                     </Button>
                   </View>
-                </View>
+                </Card>
               ))}
             </View>
           )}
