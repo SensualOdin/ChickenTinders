@@ -10,6 +10,7 @@ import { Badge } from '../../components/ui/Badge';
 import { copyToClipboard, vibrate, formatPriceTier } from '../../lib/utils';
 import { supabase } from '../../lib/supabase';
 import { getUserId, setUserId, getDisplayName, setDisplayName } from '../../lib/storage';
+import { RESTAURANT_LIMIT } from '../../lib/constants';
 
 export default function LobbyPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -70,9 +71,8 @@ export default function LobbyPage() {
 
     const fetchSwipeProgress = async () => {
       try {
-        // Get total number of restaurants for this group (mock data = 5)
-        // TODO: Get actual restaurant count from group settings or API
-        const totalRestaurants = 5; // Mock restaurants count
+        // Total restaurants is limited per session (defined in constants)
+        const totalRestaurants = RESTAURANT_LIMIT;
 
         // Get swipe counts for each member
         const { data: swipes, error: swipeError } = await supabase
@@ -363,6 +363,25 @@ export default function LobbyPage() {
 
   const canStartSwiping = members.length >= 2;
 
+  // Check if current user has finished swiping
+  const [userFinished, setUserFinished] = useState(false);
+
+  useEffect(() => {
+    const checkFinished = async () => {
+      const userId = await getUserId();
+      if (!userId) {
+        setUserFinished(false);
+        return;
+      }
+
+      const swipeCount = swipeProgress[userId] || 0;
+      const totalRestaurants = RESTAURANT_LIMIT;
+      const finished = swipeCount >= totalRestaurants && swipeCount > 0;
+      setUserFinished(finished);
+    };
+    checkFinished();
+  }, [swipeProgress]);
+
   return (
     <ScrollView className="flex-1 bg-background">
       <Toaster position="top-center" />
@@ -414,7 +433,7 @@ export default function LobbyPage() {
           <View className="gap-3">
             {members.map((member) => {
               const swipeCount = swipeProgress[member.user_id] || 0;
-              const totalRestaurants = 5; // Mock data has 5 restaurants
+              const totalRestaurants = RESTAURANT_LIMIT;
               const hasFinished = swipeCount >= totalRestaurants && swipeCount > 0;
               const isSwiping = swipeCount > 0 && !hasFinished;
 
@@ -485,12 +504,16 @@ export default function LobbyPage() {
         {/* Start Swiping Button */}
         <Button
           onPress={handleStartSwiping}
-          disabled={!canStartSwiping}
+          disabled={!canStartSwiping || userFinished}
           variant="primary"
           size="lg"
           fullWidth
         >
-          {canStartSwiping ? '▶️ Start Swiping' : '⏳ Waiting for more people...'}
+          {userFinished
+            ? '✅ You finished swiping'
+            : canStartSwiping
+              ? '▶️ Start Swiping'
+              : '⏳ Waiting for more people...'}
         </Button>
 
         {/* Back Button */}

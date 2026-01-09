@@ -68,10 +68,10 @@ export function useGroup(groupId: string) {
           filter: `group_id=eq.${groupId}`,
         },
         async (payload) => {
-          console.log('Real-time update:', payload);
+          console.log('Real-time update for group_members:', payload);
 
           // Refetch members when changes occur
-          const { data: membersData } = await supabase
+          const { data: membersData, error: refetchError } = await supabase
             .from('group_members')
             .select(`
               *,
@@ -80,12 +80,17 @@ export function useGroup(groupId: string) {
             .eq('group_id', groupId)
             .order('joined_at', { ascending: true });
 
-          if (membersData) {
+          if (refetchError) {
+            console.error('Error refetching members:', refetchError);
+          } else if (membersData) {
+            console.log('Updated members list:', membersData.length, 'members');
             setMembers(membersData);
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`Group members subscription status for ${groupId}:`, status);
+      });
 
     // Cleanup subscription on unmount
     return () => {

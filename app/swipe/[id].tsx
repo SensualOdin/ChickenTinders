@@ -16,6 +16,7 @@ import { getUserId } from '../../lib/storage';
 import { haptic } from '../../lib/utils';
 import { EmptyState } from '../../components/feedback/EmptyState';
 import { analytics } from '../../lib/monitoring/analytics';
+import { RESTAURANT_LIMIT } from '../../lib/constants';
 
 export default function SwipePage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -55,7 +56,8 @@ export default function SwipePage() {
         }
 
         // Use mock data for now (Yelp API requires server-side proxy due to CORS)
-        const businesses = getMockRestaurants();
+        // Limit restaurants per session and use group ID as seed for consistent randomization
+        const businesses = getMockRestaurants(RESTAURANT_LIMIT, id);
 
         // TODO: Replace with actual Yelp API call via Supabase Edge Function
         // const businesses = await getRestaurantsForGroup(
@@ -63,7 +65,10 @@ export default function SwipePage() {
         //   group.radius,
         //   group.price_tier,
         //   [] // TODO: Get dietary tags from all members
-        // );
+        // ).then(results => {
+        //   // Shuffle with group ID as seed for consistency across all users
+        //   return shuffleWithSeed(results, id).slice(0, RESTAURANT_LIMIT);
+        // });
 
         if (businesses.length === 0) {
           setError('No restaurants found in your area. Try widening your search radius.');

@@ -99,6 +99,57 @@ export const MOCK_RESTAURANTS: YelpBusiness[] = [
   },
 ];
 
-export function getMockRestaurants(): YelpBusiness[] {
-  return MOCK_RESTAURANTS;
+/**
+ * Shuffle array using Fisher-Yates algorithm
+ */
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+/**
+ * Get mock restaurants, randomized and limited
+ * @param limit Maximum number of restaurants to return (default: 20)
+ * @param seed Optional seed for consistent randomization (e.g., group_id)
+ */
+export function getMockRestaurants(limit: number = 20, seed?: string): YelpBusiness[] {
+  // If seed is provided, use it to create a pseudo-random but consistent order
+  let restaurants = [...MOCK_RESTAURANTS];
+
+  if (seed) {
+    // Convert seed to number for consistent ordering
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      const char = seed.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+
+    // Use hash to seed the shuffle
+    const seededRandom = (function() {
+      let seed = Math.abs(hash);
+      return function() {
+        seed = (seed * 9301 + 49297) % 233280;
+        return seed / 233280;
+      };
+    })();
+
+    // Shuffle with seeded random
+    const shuffled = [...restaurants];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(seededRandom() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    restaurants = shuffled;
+  } else {
+    // Random shuffle
+    restaurants = shuffleArray(restaurants);
+  }
+
+  // Limit the results
+  return restaurants.slice(0, Math.min(limit, restaurants.length));
 }

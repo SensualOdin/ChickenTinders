@@ -28,6 +28,13 @@ export default function LandingPage() {
           </Pressable>
 
           <View className="flex-row gap-3">
+            <Button
+              href="/active-sessions"
+              variant="ghost"
+              size="sm"
+            >
+              Active Sessions
+            </Button>
             {!isGuest && user && (
               <Button
                 href="/my-groups"
