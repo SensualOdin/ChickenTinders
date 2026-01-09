@@ -8,7 +8,41 @@ export type MatchResult = {
   super_like_count: number;
   is_unanimous: boolean;
   likers: string[]; // user IDs who liked this
+  match_score: number; // Weighted score (0-100)
 };
+
+/**
+ * Calculate match score with weighted factors
+ * Score = (super_like_weight * super_likes) + (rating_weight * rating) + (unanimity_bonus)
+ */
+function calculateMatchScore(
+  superLikeCount: number,
+  memberCount: number,
+  rating: number,
+  isUnanimous: boolean
+): number {
+  // Weights (should total ~100 for max score of 100)
+  const SUPER_LIKE_WEIGHT = 30; // 30 points per super-like percentage
+  const RATING_WEIGHT = 20; // 20 points for max rating (5.0)
+  const UNANIMITY_BONUS = 25; // 25 point bonus for unanimous super-likes
+  const BASE_MATCH_SCORE = 25; // 25 points for being a match at all
+
+  // Calculate super-like percentage (0-1)
+  const superLikePercentage = memberCount > 0 ? superLikeCount / memberCount : 0;
+
+  // Calculate rating score (normalized to 0-1)
+  const ratingScore = rating / 5.0;
+
+  // Calculate total score
+  let score = BASE_MATCH_SCORE;
+  score += SUPER_LIKE_WEIGHT * superLikePercentage;
+  score += RATING_WEIGHT * ratingScore;
+  if (isUnanimous) {
+    score += UNANIMITY_BONUS;
+  }
+
+  return Math.round(score);
+}
 
 /**
  * Detect matches for a group
@@ -66,25 +100,29 @@ export async function detectMatches(
         // Everyone liked it! It's a match!
         const restaurant = allRestaurants.find((r) => r.id === restaurantId);
         if (restaurant) {
+          const isUnanimous = data.superLikes === memberCount;
+          const matchScore = calculateMatchScore(
+            data.superLikes,
+            memberCount,
+            restaurant.rating || 0,
+            isUnanimous
+          );
+
           matches.push({
             restaurant_id: restaurantId,
             restaurant_data: restaurant,
             like_count: data.users.length,
             super_like_count: data.superLikes,
-            is_unanimous: data.superLikes === memberCount, // Everyone super-liked
+            is_unanimous: isUnanimous,
             likers: data.users,
+            match_score: matchScore,
           });
         }
       }
     });
 
-    // Sort by super-like count first, then by total likes
-    matches.sort((a, b) => {
-      if (b.super_like_count !== a.super_like_count) {
-        return b.super_like_count - a.super_like_count;
-      }
-      return b.like_count - a.like_count;
-    });
+    // Sort by match score (highest first)
+    matches.sort((a, b) => b.match_score - a.match_score);
 
     return matches;
   } catch (error) {
@@ -189,6 +227,7 @@ export async function getMatches(groupId: string): Promise<MatchResult[]> {
       super_like_count: 0, // Not stored
       is_unanimous: match.is_unanimous,
       likers: [],
+      match_score: 0, // Not stored (calculated during detection)
     })) || [];
   } catch (error) {
     console.error('Error getting matches:', error);
