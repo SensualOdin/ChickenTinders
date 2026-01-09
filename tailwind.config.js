@@ -5,6 +5,7 @@ module.exports = {
     "./components/**/*.{js,jsx,ts,tsx}"
   ],
   presets: [require("nativewind/preset")],
+  darkMode: 'class', // Enable class-based dark mode
   theme: {
     extend: {
       colors: {
@@ -45,8 +46,18 @@ module.exports = {
         warning: '#FF8C42', // Warm orange
         error: '#EF4444', // Error red
         info: '#3B82F6', // Info blue
-        background: '#FFF5E1', // Cream background
-        surface: '#FFFFFF',
+
+        // Dark mode color system (foundation only - not fully implemented)
+        background: {
+          DEFAULT: '#FFF5E1', // Cream background
+          dark: '#1A1A1A', // Dark background
+        },
+        surface: {
+          DEFAULT: '#FFFFFF', // Light surface
+          dark: '#2C2C2C', // Dark surface
+        },
+
+        // Legacy single-value colors (kept for compatibility)
         dark: '#2C0A0A', // Deep brown
         textDark: '#2C0A0A', // Deep brown
         textMuted: '#6B4423',
