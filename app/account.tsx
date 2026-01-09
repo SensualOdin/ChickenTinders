@@ -7,6 +7,7 @@ import { BackButton } from '../components/navigation/BackButton';
 import { Button } from '../components/ui/Button';
 import { Card, CardHeader, CardContent } from '../components/ui/Card';
 import { InfoCard } from '../components/ui/InfoCard';
+import { Badge } from '../components/ui/Badge';
 
 export default function AccountPage() {
   const router = useRouter();
@@ -170,12 +171,13 @@ export default function AccountPage() {
             <CardHeader title="Dietary Preferences" />
             <View className="flex-row flex-wrap gap-2">
               {profile.dietary_tags.map((tag) => (
-                <View
+                <Badge
                   key={tag}
-                  className="bg-blue-100 px-3 py-1 rounded-full"
+                  variant="info"
+                  size="md"
                 >
-                  <Text className="text-sm text-blue-900">{tag}</Text>
-                </View>
+                  {tag}
+                </Badge>
               ))}
             </View>
           </Card>
