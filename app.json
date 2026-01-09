@@ -4,9 +4,24 @@
     "slug": "chickentinders",
     "version": "1.0.0",
     "scheme": "chickentinders",
+    "description": "Swipe right on restaurants with friends. ChickenTinders helps groups find the perfect restaurant match through a fun, Tinder-style swiping experience.",
     "web": {
       "bundler": "metro",
-      "output": "static"
+      "output": "static",
+      "favicon": "./assets/images/favicon.png",
+      "meta": {
+        "title": "ChickenTinders - Find Restaurants Together",
+        "description": "Swipe right on restaurants with friends. ChickenTinders helps groups find the perfect restaurant match through a fun, Tinder-style swiping experience.",
+        "keywords": "restaurant finder, group dining, restaurant swipe, food app, restaurant matcher, dining with friends, restaurant tinder",
+        "author": "ChickenTinders Team",
+        "ogTitle": "ChickenTinders - Find Restaurants Together",
+        "ogDescription": "Swipe right on restaurants with friends. Find the perfect restaurant match for your group.",
+        "ogImage": "./assets/images/og-image.png",
+        "twitterCard": "summary_large_image",
+        "twitterTitle": "ChickenTinders - Find Restaurants Together",
+        "twitterDescription": "Swipe right on restaurants with friends. Find the perfect restaurant match for your group.",
+        "twitterImage": "./assets/images/og-image.png"
+      }
     },
     "plugins": [
       "expo-router"
@@ -18,6 +33,6 @@
     "userInterfaceStyle": "light",
     "backgroundColor": "#FFF5E1",
     "primaryColor": "#A91D3A",
-    "icon": "./app/assets/images/icon.png"
+    "icon": "./assets/images/icon.png"
   }
 }

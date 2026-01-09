@@ -1,0 +1,16 @@
+# robots.txt for ChickenTinders
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow private/dynamic pages
+Disallow: /lobby/
+Disallow: /swipe/
+Disallow: /results/
+
+# Sitemap location
+Sitemap: https://chickentinders.com/sitemap.xml
+
+# Crawl-delay (optional, helps prevent overwhelming the server)
+Crawl-delay: 1

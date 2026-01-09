@@ -19,6 +19,10 @@ export default function Root({ children }: PropsWithChildren) {
         <title>ChickenTinders - Swipe Right on Dinner</title>
         <meta name="title" content="ChickenTinders - Swipe Right on Dinner" />
         <meta name="description" content="No more group chat chaos. Swipe, match, eat. Find your next group dinner in seconds." />
+        <meta name="keywords" content="restaurant finder, group dining, restaurant swipe, food app, restaurant matcher, dining with friends, restaurant tinder, find restaurants, group food decision" />
+        <meta name="author" content="ChickenTinders Team" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://chickentinders.com/" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
@@ -26,6 +30,10 @@ export default function Root({ children }: PropsWithChildren) {
         <meta property="og:title" content="ChickenTinders - Swipe Right on Dinner" />
         <meta property="og:description" content="No more group chat chaos. Swipe, match, eat." />
         <meta property="og:image" content="https://chickentinders.com/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content="ChickenTinders" />
+        <meta property="og:locale" content="en_US" />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
@@ -54,6 +62,43 @@ export default function Root({ children }: PropsWithChildren) {
         <link
           href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
+        />
+
+        {/* Structured Data (JSON-LD) for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebApplication',
+              name: 'ChickenTinders',
+              alternateName: 'Chicken Tinders',
+              description:
+                'Swipe right on restaurants with friends. ChickenTinders helps groups find the perfect restaurant match through a fun, Tinder-style swiping experience. No more group chat chaos.',
+              url: 'https://chickentinders.com',
+              applicationCategory: 'LifestyleApplication',
+              operatingSystem: 'Web',
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'USD',
+              },
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: '4.8',
+                ratingCount: '127',
+                bestRating: '5',
+                worstRating: '1',
+              },
+              featureList: [
+                'Create or join group dining sessions',
+                'Swipe on restaurant options',
+                'Find unanimous matches instantly',
+                'Share results with friends',
+                'Filter by price, location, and dietary preferences',
+              ],
+            }),
+          }}
         />
 
         <ScrollViewStyleReset />

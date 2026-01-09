@@ -1,5 +1,5 @@
 {
-  "name": "ChickenTinders",
+  "name": "ChickenTinders - Find Restaurants Together",
   "short_name": "ChickenTinders",
   "description": "Swipe Right on Dinner - Group Food Decision Made Easy",
   "icons": [
@@ -25,7 +25,10 @@
   "theme_color": "#A91D3A",
   "background_color": "#FFF5E1",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "start_url": "/",
-  "scope": "/"
+  "scope": "/",
+  "categories": ["food", "lifestyle", "social"],
+  "lang": "en-US",
+  "dir": "ltr"
 }
