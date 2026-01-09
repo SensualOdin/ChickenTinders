@@ -48,6 +48,12 @@ export default function SwipePage() {
           price: group.price_tier,
         });
 
+        const userId = await getUserId();
+        if (!userId) {
+          toast.error('User not found');
+          return;
+        }
+
         // Use mock data for now (Yelp API requires server-side proxy due to CORS)
         const businesses = getMockRestaurants();
 
@@ -65,6 +71,36 @@ export default function SwipePage() {
         }
 
         console.log(`Found ${businesses.length} restaurants`);
+
+        // Check for existing swipes to resume progress
+        const { data: existingSwipes } = await supabase
+          .from('swipes')
+          .select('restaurant_id')
+          .eq('group_id', id)
+          .eq('user_id', userId);
+
+        if (existingSwipes && existingSwipes.length > 0) {
+          const swipedRestaurantIds = new Set(existingSwipes.map(s => s.restaurant_id));
+          console.log(`User has already swiped on ${existingSwipes.length} restaurants`);
+
+          // Find first unswipped restaurant
+          const firstUnswippedIndex = businesses.findIndex(
+            b => !swipedRestaurantIds.has(b.id)
+          );
+
+          if (firstUnswippedIndex >= 0) {
+            setCurrentIndex(firstUnswippedIndex);
+            console.log(`Resuming at index ${firstUnswippedIndex}`);
+          } else {
+            // All restaurants already swiped, return to lobby
+            console.log('All restaurants already swiped, returning to lobby');
+            setTimeout(() => {
+              router.push(`/lobby/${id}`);
+            }, 500);
+            return;
+          }
+        }
+
         setRestaurants(businesses);
       } catch (err: any) {
         console.error('Error loading restaurants:', err);
@@ -91,6 +127,28 @@ export default function SwipePage() {
 
     try {
       setSwiping(true);
+
+      // Check if swipe already exists
+      const { data: existingSwipe } = await supabase
+        .from('swipes')
+        .select('id')
+        .eq('group_id', id)
+        .eq('user_id', userId)
+        .eq('restaurant_id', restaurant.id)
+        .single();
+
+      if (existingSwipe) {
+        // Swipe already exists, skip to next card
+        console.log('Swipe already exists, skipping to next card');
+        setCurrentIndex(currentIndex + 1);
+
+        if (currentIndex + 1 >= restaurants.length) {
+          setTimeout(() => {
+            router.push(`/lobby/${id}`);
+          }, 500);
+        }
+        return;
+      }
 
       // Save swipe to database
       const { error: swipeError } = await supabase
