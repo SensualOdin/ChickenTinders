@@ -237,6 +237,10 @@ export default function ResultsPage() {
     }
   }, [matches, id]);
 
+  // Memoize expensive calculations - MUST be before conditional returns
+  const unanimousMatches = useMemo(() => matches.filter(m => m.is_unanimous), [matches]);
+  const hasUnanimous = unanimousMatches.length > 0;
+
   // Show loading only if we haven't loaded initial status yet or if we're detecting matches
   if (!initialLoadComplete || (loading && allMembersFinished)) {
     return (
@@ -365,9 +369,7 @@ export default function ResultsPage() {
     );
   }
 
-  // Memoize expensive calculations
-  const unanimousMatches = useMemo(() => matches.filter(m => m.is_unanimous), [matches]);
-  const hasUnanimous = unanimousMatches.length > 0;
+  // Already memoized at top of component
 
   return (
     <ScrollView className="flex-1 bg-background">
