@@ -11,6 +11,7 @@ import { generateGroupCode, isValidZipCode, getExpirationTime } from '../lib/uti
 import { getUserId, setUserId, getDisplayName, setDisplayName, getDietaryTags, setDietaryTags } from '../lib/storage';
 import { getSavedGroup } from '../lib/api/savedGroups';
 import { useAuth } from '../lib/contexts/AuthContext';
+import { analytics } from '../lib/monitoring/analytics';
 
 export default function CreateGroupPage() {
   const router = useRouter();
@@ -196,6 +197,9 @@ export default function CreateGroupPage() {
         });
 
       if (memberError) throw memberError;
+
+      // Track group creation
+      analytics.groupCreated(groupCode, 1);
 
       // 5. Navigate to lobby
       router.push(`/lobby/${groupCode}`);

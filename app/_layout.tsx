@@ -18,12 +18,25 @@ import {
 } from '@expo-google-fonts/dm-sans';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { initSentry, captureError } from '../lib/monitoring/sentry';
+import { initAnalytics } from '../lib/monitoring/analytics';
 
 // Prevent auto-hiding splash screen
 SplashScreen.preventAutoHideAsync();
 
+// Initialize monitoring services
+initSentry();
+initAnalytics();
+
 // Error Fallback Component
 function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+  // Capture error in Sentry
+  useEffect(() => {
+    captureError(error, {
+      errorBoundary: 'RootLayout',
+    });
+  }, [error]);
+
   return (
     <View className="flex-1 items-center justify-center bg-background p-4">
       <Text className="text-2xl font-bold text-primary mb-4">Oops! Something went wrong</Text>

@@ -10,6 +10,7 @@ import { Card } from '../../components/ui/Card';
 import { Container } from '../../components/layout/Container';
 import { Stack } from '../../components/layout/Stack';
 import { haptic } from '../../lib/utils';
+import { analytics } from '../../lib/monitoring/analytics';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,8 +34,15 @@ export default function LoginPage() {
       if (error) {
         toast.error(error.message || 'Failed to sign in');
         haptic.error();
+        analytics.errorOccurred('auth_error', error.message, { method: 'email' });
         return;
       }
+
+      // Track successful sign in
+      analytics.signIn('email');
+
+      // Note: User context will be set automatically by auth state change
+      // The onAuthStateChange listener in AuthContext will trigger after successful login
 
       toast.success('Welcome back! 🎉');
       haptic.success();
@@ -43,6 +51,7 @@ export default function LoginPage() {
       console.error('Login error:', err);
       toast.error('Failed to sign in');
       haptic.error();
+      analytics.errorOccurred('auth_exception', err.message, { method: 'email' });
     } finally {
       setLoading(false);
     }

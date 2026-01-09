@@ -15,6 +15,7 @@ import { supabase } from '../../lib/supabase';
 import { getUserId } from '../../lib/storage';
 import { haptic } from '../../lib/utils';
 import { EmptyState } from '../../components/feedback/EmptyState';
+import { analytics } from '../../lib/monitoring/analytics';
 
 export default function SwipePage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -103,6 +104,13 @@ export default function SwipePage() {
         });
 
       if (swipeError) throw swipeError;
+
+      // Track analytics
+      if (isLiked) {
+        analytics.restaurantLiked(restaurant.id, restaurant.name, isSuperLike);
+      } else {
+        analytics.restaurantDisliked(restaurant.id, restaurant.name);
+      }
 
       // Haptic feedback with enhanced patterns
       if (isSuperLike) {

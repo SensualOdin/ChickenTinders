@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase } from '../supabase';
 import { getUserId, setUserId, getDisplayName, setDisplayName, clearUserData } from '../storage';
+import { identifyUser, resetUser } from '../monitoring/analytics';
+import { setSentryUser, clearSentryUser } from '../monitoring/sentry';
 
 type AuthContextType = {
   // Auth state
@@ -112,6 +114,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Sync to local storage for compatibility
         await setUserId(data.id);
         await setDisplayName(data.display_name);
+
+        // Set user context for monitoring
+        identifyUser(data.id, {
+          email: data.email,
+          display_name: data.display_name,
+          is_guest: data.is_guest,
+        });
+        setSentryUser(data.id, data.email || undefined, data.display_name);
       }
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -203,6 +213,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       setSession(null);
       setProfile(null);
+
+      // Clear monitoring user context
+      resetUser();
+      clearSentryUser();
 
       // Clear local storage but keep guest data if needed
       // User can continue as guest after sign out

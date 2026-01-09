@@ -17,6 +17,7 @@ import { Stack } from '../../components/layout/Stack';
 import { supabase } from '../../lib/supabase';
 import { Avatar } from '../../components/ui/Avatar';
 import { haptic } from '../../lib/utils';
+import { analytics } from '../../lib/monitoring/analytics';
 
 type SwipeStatus = {
   user_id: string;
@@ -170,6 +171,11 @@ export default function ResultsPage() {
         if (detectedMatches.length > 0) {
           await saveMatches(id, detectedMatches);
           setMatches(detectedMatches);
+
+          // Track matches found
+          const unanimousCount = detectedMatches.filter(m => m.is_unanimous).length;
+          analytics.matchesFound(id, detectedMatches.length, unanimousCount);
+
           toast.success('🎉 Matches found!');
           setShowConfetti(true);
           // Hide confetti after animation
@@ -196,6 +202,9 @@ export default function ResultsPage() {
     const query = encodeURIComponent(`${restaurant.name} ${address}`);
     const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
 
+    // Track directions opened
+    analytics.directionsOpened(restaurant.id, restaurant.name);
+
     if (typeof window !== 'undefined') {
       window.open(url, '_blank');
     } else {
@@ -216,12 +225,17 @@ export default function ResultsPage() {
         title: 'ChickenTinders Match Results',
       });
 
+      // Track successful share (Share.share resolves even on cancel, so this might track cancels too)
+      if (id) {
+        analytics.matchShared(id, matches.length);
+      }
+
       haptic.light();
     } catch (error: any) {
       console.error('Error sharing:', error);
       // User cancelled or error occurred
     }
-  }, [matches]);
+  }, [matches, id]);
 
   // Show loading only if we haven't loaded initial status yet or if we're detecting matches
   if (!initialLoadComplete || (loading && allMembersFinished)) {

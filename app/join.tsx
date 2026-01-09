@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 import { BackButton } from '../components/navigation/BackButton';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { analytics } from '../lib/monitoring/analytics';
 
 export default function JoinPage() {
   const router = useRouter();
@@ -53,10 +54,14 @@ export default function JoinPage() {
 
       if (group.status === 'matched') {
         // Still allow joining to see results
+        analytics.groupJoined(group.id, upperCode);
         router.push(`/results/${group.id}`);
         setLoading(false);
         return;
       }
+
+      // Track group joined
+      analytics.groupJoined(group.id, upperCode);
 
       // Redirect to lobby
       router.push(`/lobby/${group.id}`);
