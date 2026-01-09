@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, memo } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -23,7 +23,7 @@ type SwipeableCardProps = {
 const SWIPE_THRESHOLD = 120;
 const ROTATION_ANGLE = 30;
 
-export function SwipeableCard({
+function SwipeableCardComponent({
   restaurant,
   onLike,
   onDislike,
@@ -214,3 +214,12 @@ export function SwipeableCard({
     </GestureDetector>
   );
 }
+
+// Memoize the component to prevent unnecessary re-renders
+// Only re-render if restaurant.id or isActive changes
+export const SwipeableCard = memo(SwipeableCardComponent, (prevProps, nextProps) => {
+  return (
+    prevProps.restaurant.id === nextProps.restaurant.id &&
+    prevProps.isActive === nextProps.isActive
+  );
+});

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, Image, Linking, Share } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
@@ -191,7 +191,7 @@ export default function ResultsPage() {
     loadMatches();
   }, [id, group, allMembersFinished]);
 
-  const handleGetDirections = (restaurant: MatchResult['restaurant_data']) => {
+  const handleGetDirections = useCallback((restaurant: MatchResult['restaurant_data']) => {
     const address = restaurant.location.display_address.join(', ');
     const query = encodeURIComponent(`${restaurant.name} ${address}`);
     const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
@@ -201,9 +201,9 @@ export default function ResultsPage() {
     } else {
       Linking.openURL(url);
     }
-  };
+  }, []);
 
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     try {
       const matchList = matches
         .map((m) => `• ${m.restaurant_data.name}`)
@@ -221,7 +221,7 @@ export default function ResultsPage() {
       console.error('Error sharing:', error);
       // User cancelled or error occurred
     }
-  };
+  }, [matches]);
 
   // Show loading only if we haven't loaded initial status yet or if we're detecting matches
   if (!initialLoadComplete || (loading && allMembersFinished)) {
@@ -351,7 +351,8 @@ export default function ResultsPage() {
     );
   }
 
-  const unanimousMatches = matches.filter(m => m.is_unanimous);
+  // Memoize expensive calculations
+  const unanimousMatches = useMemo(() => matches.filter(m => m.is_unanimous), [matches]);
   const hasUnanimous = unanimousMatches.length > 0;
 
   return (

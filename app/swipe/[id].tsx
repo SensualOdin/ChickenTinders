@@ -1,6 +1,6 @@
 import { ConfettiCelebration } from '../../components/animations/ConfettiCelebration';
 import { FontAwesome } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -77,7 +77,7 @@ export default function SwipePage() {
     loadRestaurants();
   }, [group, groupLoading]);
 
-  const handleSwipe = async (isLiked: boolean, isSuperLike: boolean = false) => {
+  const handleSwipe = useCallback(async (isLiked: boolean, isSuperLike: boolean = false) => {
     if (!id || swiping || currentIndex >= restaurants.length) return;
 
     const restaurant = restaurants[currentIndex];
@@ -130,11 +130,11 @@ export default function SwipePage() {
     } finally {
       setSwiping(false);
     }
-  };
+  }, [id, swiping, currentIndex, restaurants, router]);
 
-  const handleLike = () => handleSwipe(true, false);
-  const handleDislike = () => handleSwipe(false, false);
-  const handleSuperLike = () => handleSwipe(true, true);
+  const handleLike = useCallback(() => handleSwipe(true, false), [handleSwipe]);
+  const handleDislike = useCallback(() => handleSwipe(false, false), [handleSwipe]);
+  const handleSuperLike = useCallback(() => handleSwipe(true, true), [handleSwipe]);
 
   if (groupLoading || loading) {
     return (
