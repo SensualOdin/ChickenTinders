@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../lib/contexts/AuthContext';
 import { createSavedGroup } from '../../lib/api/savedGroups';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import { haptic } from '../../lib/utils';
 
 type Member = {
@@ -107,12 +109,14 @@ export default function CreateSavedGroupPage() {
         <View className="max-w-app mx-auto w-full px-6 py-8">
           {/* Header */}
           <View className="mb-8">
-            <Pressable
-              onPress={() => router.push('/my-groups')}
-              className="mb-4 self-start"
+            <Button
+              href="/my-groups"
+              variant="ghost"
+              size="sm"
+              className="mb-4 self-start -ml-2"
             >
-              <Text className="text-primary text-base">← Back to My Groups</Text>
-            </Pressable>
+              ← Back to My Groups
+            </Button>
 
             <Text className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Playfair Display' }}>
               Create Group
@@ -125,19 +129,14 @@ export default function CreateSavedGroupPage() {
           {/* Form */}
           <View className="gap-6">
             {/* Group Name */}
-            <View>
-              <Text className="text-textDark font-medium mb-2">Group Name</Text>
-              <TextInput
-                value={name}
-                onChangeText={setName}
-                placeholder="e.g., Friday Night Crew, Work Lunch, Family Dinners"
-                placeholderTextColor="#9B7653"
-                className="bg-surface border border-accent/20 rounded-xl px-4 py-4 text-textDark text-base"
-              />
-              <Text className="text-textMuted text-xs mt-2">
-                Just a name for your group - you'll set location/preferences when starting each session
-              </Text>
-            </View>
+            <Input
+              label="Group Name"
+              value={name}
+              onChangeText={setName}
+              placeholder="e.g., Friday Night Crew, Work Lunch, Family Dinners"
+              helperText="Just a name for your group - you'll set location/preferences when starting each session"
+              size="lg"
+            />
 
             {/* Members */}
             <View>
@@ -148,20 +147,22 @@ export default function CreateSavedGroupPage() {
 
               {/* Add Member Input */}
               <View className="flex-row gap-2 mb-3">
-                <TextInput
-                  value={newMemberName}
-                  onChangeText={setNewMemberName}
-                  placeholder="Add other member names"
-                  placeholderTextColor="#9B7653"
-                  onSubmitEditing={addMember}
-                  className="flex-1 bg-surface border border-accent/20 rounded-xl px-4 py-3 text-textDark"
-                />
-                <Pressable
+                <View className="flex-1">
+                  <Input
+                    value={newMemberName}
+                    onChangeText={setNewMemberName}
+                    placeholder="Add other member names"
+                    onSubmitEditing={addMember}
+                    size="md"
+                  />
+                </View>
+                <Button
                   onPress={addMember}
-                  className="bg-secondary px-6 py-3 rounded-xl active:scale-95"
+                  variant="secondary"
+                  size="md"
                 >
-                  <Text className="text-dark font-semibold">Add</Text>
-                </Pressable>
+                  Add
+                </Button>
               </View>
 
               {/* Members List */}
@@ -192,19 +193,17 @@ export default function CreateSavedGroupPage() {
             </View>
 
             {/* Create Button */}
-            <Pressable
+            <Button
               onPress={handleCreate}
               disabled={loading}
-              className="bg-primary px-6 py-4 rounded-2xl active:scale-95 shadow-elevated mt-4"
+              loading={loading}
+              variant="primary"
+              size="lg"
+              fullWidth
+              className="mt-4"
             >
-              {loading ? (
-                <ActivityIndicator color="#FFF5E1" />
-              ) : (
-                <Text className="text-surface text-center font-semibold text-base">
-                  Create Group
-                </Text>
-              )}
-            </Pressable>
+              Create Group
+            </Button>
           </View>
         </View>
       </ScrollView>

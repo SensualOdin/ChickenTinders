@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../lib/contexts/AuthContext';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import { haptic } from '../../lib/utils';
 
 export default function SignUpPage() {
@@ -83,9 +85,14 @@ export default function SignUpPage() {
       <View className="flex-1 max-w-app mx-auto w-full px-4 py-8">
         {/* Header */}
         <View className="mb-8">
-          <Pressable onPress={() => router.push('/')} className="mb-4">
-            <Text className="text-primary text-base font-semibold">← Back to Home</Text>
-          </Pressable>
+          <Button
+            href="/"
+            variant="ghost"
+            size="sm"
+            className="mb-4 self-start -ml-2"
+          >
+            ← Back to Home
+          </Button>
 
           <Text className="text-4xl mb-2">🍗</Text>
           <Text className="text-3xl font-bold text-primary mb-2">
@@ -100,93 +107,59 @@ export default function SignUpPage() {
 
         {/* Form */}
         <View className="gap-4 mb-6">
-          {/* Display Name Input */}
-          <View>
-            <Text className="text-sm font-semibold text-textDark mb-2">
-              Display Name
-            </Text>
-            <TextInput
-              value={displayName}
-              onChangeText={setDisplayName}
-              placeholder="Your name"
-              placeholderTextColor="#9CA3AF"
-              maxLength={50}
-              className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 text-base text-textDark"
-              style={{ outlineStyle: 'none' }}
-            />
-          </View>
+          <Input
+            label="Display Name"
+            value={displayName}
+            onChangeText={setDisplayName}
+            placeholder="Your name"
+            maxLength={50}
+            size="lg"
+          />
 
-          {/* Email Input */}
-          <View>
-            <Text className="text-sm font-semibold text-textDark mb-2">
-              Email
-            </Text>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="your@email.com"
-              placeholderTextColor="#9CA3AF"
-              autoCapitalize="none"
-              keyboardType="email-address"
-              autoComplete="email"
-              className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 text-base text-textDark"
-              style={{ outlineStyle: 'none' }}
-            />
-          </View>
+          <Input
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholder="your@email.com"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
+            size="lg"
+          />
 
-          {/* Password Input */}
-          <View>
-            <Text className="text-sm font-semibold text-textDark mb-2">
-              Password
-            </Text>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="At least 6 characters"
-              placeholderTextColor="#9CA3AF"
-              secureTextEntry
-              autoComplete="password-new"
-              className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 text-base text-textDark"
-              style={{ outlineStyle: 'none' }}
-            />
-          </View>
+          <Input
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="At least 6 characters"
+            secureTextEntry
+            autoComplete="password-new"
+            size="lg"
+          />
 
-          {/* Confirm Password Input */}
-          <View>
-            <Text className="text-sm font-semibold text-textDark mb-2">
-              Confirm Password
-            </Text>
-            <TextInput
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder="Re-enter password"
-              placeholderTextColor="#9CA3AF"
-              secureTextEntry
-              autoComplete="password-new"
-              className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 text-base text-textDark"
-              style={{ outlineStyle: 'none' }}
-            />
-          </View>
+          <Input
+            label="Confirm Password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Re-enter password"
+            secureTextEntry
+            autoComplete="password-new"
+            size="lg"
+          />
         </View>
 
         {/* Sign Up Button */}
-        <Pressable
+        <Button
           onPress={handleSignUp}
           disabled={loading || authLoading}
-          className={`py-4 rounded-xl items-center mb-4 ${
-            loading || authLoading
-              ? 'bg-gray-300'
-              : 'bg-primary active:scale-95'
-          }`}
+          loading={loading}
+          variant="primary"
+          size="lg"
+          fullWidth
+          className="mb-4"
         >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text className="text-white text-lg font-bold">
-              {isGuest && profile ? 'Link Account' : 'Create Account'}
-            </Text>
-          )}
-        </Pressable>
+          {isGuest && profile ? 'Link Account' : 'Create Account'}
+        </Button>
 
         {/* Divider */}
         <View className="flex-row items-center my-6">
@@ -200,26 +173,26 @@ export default function SignUpPage() {
           <Text className="text-sm text-gray-600 mb-3">
             Already have an account?
           </Text>
-          <Pressable
-            onPress={() => router.push('/auth/login')}
-            className="border-2 border-secondary px-6 py-3 rounded-xl active:scale-95"
+          <Button
+            href="/auth/login"
+            variant="outline"
+            size="md"
           >
-            <Text className="text-secondary text-base font-semibold">
-              Sign In
-            </Text>
-          </Pressable>
+            Sign In
+          </Button>
         </View>
 
         {/* Continue as Guest */}
         {!profile && (
-          <Pressable
-            onPress={() => router.replace('/')}
-            className="mt-6 py-3 items-center"
+          <Button
+            href="/"
+            variant="ghost"
+            size="md"
+            fullWidth
+            className="mt-6"
           >
-            <Text className="text-gray-600 text-base underline">
-              Continue as Guest
-            </Text>
-          </Pressable>
+            Continue as Guest
+          </Button>
         )}
 
         {/* Info Box */}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useAuth } from '../../../lib/contexts/AuthContext';
@@ -11,6 +11,8 @@ import {
   SavedGroup,
   SavedGroupMember,
 } from '../../../lib/api/savedGroups';
+import { Button } from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
 import { haptic } from '../../../lib/utils';
 
 type Member = SavedGroupMember & { _isNew?: boolean };
@@ -145,9 +147,14 @@ export default function EditSavedGroupPage() {
     return (
       <View className="flex-1 bg-background items-center justify-center">
         <Text className="text-textMuted">Group not found</Text>
-        <Pressable onPress={() => router.push('/my-groups')} className="mt-4">
-          <Text className="text-primary">Go Back to My Groups</Text>
-        </Pressable>
+        <Button
+          href="/my-groups"
+          variant="primary"
+          size="md"
+          className="mt-4"
+        >
+          Go Back to My Groups
+        </Button>
       </View>
     );
   }
@@ -160,12 +167,14 @@ export default function EditSavedGroupPage() {
         <View className="max-w-app mx-auto w-full px-6 py-8">
           {/* Header */}
           <View className="mb-8">
-            <Pressable
-              onPress={() => router.push('/my-groups')}
-              className="mb-4 self-start"
+            <Button
+              href="/my-groups"
+              variant="ghost"
+              size="sm"
+              className="mb-4 self-start -ml-2"
             >
-              <Text className="text-primary text-base">← Back to My Groups</Text>
-            </Pressable>
+              ← Back to My Groups
+            </Button>
 
             <Text className="text-4xl font-bold text-primary mb-2" style={{ fontFamily: 'Playfair Display' }}>
               Edit Group
@@ -178,19 +187,14 @@ export default function EditSavedGroupPage() {
           {/* Form */}
           <View className="gap-6">
             {/* Group Name */}
-            <View>
-              <Text className="text-textDark font-medium mb-2">Group Name</Text>
-              <TextInput
-                value={name}
-                onChangeText={setName}
-                placeholder="e.g., Friday Night Crew, Work Lunch, Family Dinners"
-                placeholderTextColor="#9B7653"
-                className="bg-surface border border-accent/20 rounded-xl px-4 py-4 text-textDark text-base"
-              />
-              <Text className="text-textMuted text-xs mt-2">
-                Just a name for your group - you'll set location/preferences when starting each session
-              </Text>
-            </View>
+            <Input
+              label="Group Name"
+              value={name}
+              onChangeText={setName}
+              placeholder="e.g., Friday Night Crew, Work Lunch, Family Dinners"
+              helperText="Just a name for your group - you'll set location/preferences when starting each session"
+              size="lg"
+            />
 
             {/* Members */}
             <View>
@@ -198,20 +202,22 @@ export default function EditSavedGroupPage() {
 
               {/* Add Member Input */}
               <View className="flex-row gap-2 mb-3">
-                <TextInput
-                  value={newMemberName}
-                  onChangeText={setNewMemberName}
-                  placeholder="Add new member"
-                  placeholderTextColor="#9B7653"
-                  onSubmitEditing={addMember}
-                  className="flex-1 bg-surface border border-accent/20 rounded-xl px-4 py-3 text-textDark"
-                />
-                <Pressable
+                <View className="flex-1">
+                  <Input
+                    value={newMemberName}
+                    onChangeText={setNewMemberName}
+                    placeholder="Add new member"
+                    onSubmitEditing={addMember}
+                    size="md"
+                  />
+                </View>
+                <Button
                   onPress={addMember}
-                  className="bg-secondary px-6 py-3 rounded-xl active:scale-95"
+                  variant="secondary"
+                  size="md"
                 >
-                  <Text className="text-dark font-semibold">Add</Text>
-                </Pressable>
+                  Add
+                </Button>
               </View>
 
               {/* Members List */}
@@ -247,27 +253,27 @@ export default function EditSavedGroupPage() {
             </View>
 
             {/* Save Button */}
-            <Pressable
+            <Button
               onPress={handleSave}
               disabled={saving}
-              className="bg-primary px-6 py-4 rounded-2xl active:scale-95 shadow-elevated mt-4"
+              loading={saving}
+              variant="primary"
+              size="lg"
+              fullWidth
+              className="mt-4"
             >
-              {saving ? (
-                <ActivityIndicator color="#FFF5E1" />
-              ) : (
-                <Text className="text-surface text-center font-semibold text-base">
-                  Save Changes
-                </Text>
-              )}
-            </Pressable>
+              Save Changes
+            </Button>
 
             {/* Cancel Button */}
-            <Pressable
-              onPress={() => router.push('/my-groups')}
-              className="py-3 items-center"
+            <Button
+              href="/my-groups"
+              variant="ghost"
+              size="md"
+              fullWidth
             >
-              <Text className="text-textLight text-base">Cancel</Text>
-            </Pressable>
+              Cancel
+            </Button>
           </View>
         </View>
       </ScrollView>
