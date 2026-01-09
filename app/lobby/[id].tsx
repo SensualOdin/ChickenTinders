@@ -212,6 +212,23 @@ export default function LobbyPage() {
     };
   }, [id]);
 
+  // Check if current user has finished swiping
+  useEffect(() => {
+    const checkFinished = async () => {
+      const userId = await getUserId();
+      if (!userId) {
+        setUserFinished(false);
+        return;
+      }
+
+      const swipeCount = swipeProgress[userId] || 0;
+      const totalRestaurants = RESTAURANT_LIMIT;
+      const finished = swipeCount >= totalRestaurants && swipeCount > 0;
+      setUserFinished(finished);
+    };
+    checkFinished();
+  }, [swipeProgress]);
+
   const joinGroup = async (userId: string) => {
     if (!id || joining) return;
 
@@ -363,23 +380,6 @@ export default function LobbyPage() {
   }
 
   const canStartSwiping = members.length >= 2;
-
-  // Check if current user has finished swiping
-  useEffect(() => {
-    const checkFinished = async () => {
-      const userId = await getUserId();
-      if (!userId) {
-        setUserFinished(false);
-        return;
-      }
-
-      const swipeCount = swipeProgress[userId] || 0;
-      const totalRestaurants = RESTAURANT_LIMIT;
-      const finished = swipeCount >= totalRestaurants && swipeCount > 0;
-      setUserFinished(finished);
-    };
-    checkFinished();
-  }, [swipeProgress]);
 
   return (
     <ScrollView className="flex-1 bg-background">
