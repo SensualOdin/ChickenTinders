@@ -7,10 +7,10 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-white shadow-sm',
-        surface: 'bg-surface shadow-soft border border-accent/10',
-        elevated: 'bg-white shadow-card',
-        outline: 'bg-white border-2 border-gray-200',
+        default: 'bg-surface-card shadow-soft',
+        surface: 'bg-surface-card shadow-soft border border-brand-primary/10',
+        elevated: 'bg-surface-card shadow-card',
+        outline: 'bg-surface-card border-2 border-neutral-gray200',
         ghost: 'bg-transparent',
       },
       padding: {
@@ -62,11 +62,11 @@ export function CardHeader({ title, subtitle, action, className }: CardHeaderPro
   return (
     <View className={cn('mb-3', action && 'flex-row items-start justify-between', className)}>
       <View className={action ? 'flex-1' : ''}>
-        <Text className="text-lg font-bold text-textDark">
+        <Text className="text-lg font-bold text-text-display">
           {title}
         </Text>
         {subtitle && (
-          <Text className="text-sm text-textMuted mt-1">
+          <Text className="text-sm text-text-body mt-1">
             {subtitle}
           </Text>
         )}

@@ -1,17 +1,18 @@
 import { View, Text, TextInput, TextInputProps } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
+import { colors } from '../../lib/designTokens';
 import { FontAwesome } from '@expo/vector-icons';
 import { useState, useEffect } from 'react';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
 const inputVariants = cva(
-  'bg-white border-2 rounded-xl px-4 py-4 text-lg text-textDark transition-colors',
+  'bg-surface-card border-2 rounded-xl px-4 py-4 text-lg text-text-body transition-colors',
   {
     variants: {
       variant: {
-        default: 'border-cream-dark focus:border-primary focus:ring-2 focus:ring-primary/20',
-        error: 'border-error focus:border-error focus:ring-2 focus:ring-error/20',
+        default: 'border-neutral-gray200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20',
+        error: 'border-feedback-error focus:border-feedback-error focus:ring-2 focus:ring-feedback-error/20',
       },
       size: {
         sm: 'px-3 py-2 text-sm',
@@ -75,8 +76,8 @@ export function Input({
   return (
     <View className="w-full">
       {label && (
-        <Text className="text-sm font-semibold text-textDark mb-2">
-          {label}{required && <Text className="text-error"> *</Text>}
+        <Text className="text-sm font-semibold text-text-display mb-2">
+          {label}{required && <Text className="text-feedback-error"> *</Text>}
         </Text>
       )}
 
@@ -87,7 +88,7 @@ export function Input({
           className="absolute inset-0 -m-1 rounded-xl pointer-events-none"
           pointerEvents="none"
         >
-          <View className="absolute inset-0 rounded-xl bg-primary/10" />
+          <View className="absolute inset-0 rounded-xl bg-brand-primary/10" />
         </Animated.View>
 
         {leftIcon && (
@@ -95,7 +96,7 @@ export function Input({
             <FontAwesome
               name={leftIcon}
               size={size === 'sm' ? 14 : size === 'md' ? 16 : 18}
-              color="#6B4423"
+              color={colors.text.muted}
             />
           </View>
         )}
@@ -110,7 +111,7 @@ export function Input({
             setIsFocused(false);
             props.onBlur?.(e);
           }}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.text.muted}
           accessibilityLabel={props.accessibilityLabel || label}
           accessibilityRequired={required}
           accessibilityInvalid={!!error}
@@ -127,7 +128,7 @@ export function Input({
             <FontAwesome
               name={rightIcon}
               size={size === 'sm' ? 14 : size === 'md' ? 16 : 18}
-              color="#6B4423"
+              color={colors.text.muted}
             />
           </View>
         )}
@@ -135,7 +136,7 @@ export function Input({
 
       {error && (
         <Text
-          className="text-xs text-error mt-1"
+          className="text-xs text-feedback-error mt-1"
           accessibilityLiveRegion="polite"
           accessibilityRole="alert"
         >
@@ -144,7 +145,7 @@ export function Input({
       )}
 
       {helperText && !error && (
-        <Text className="text-xs text-gray-500 mt-1">
+        <Text className="text-xs text-text-muted mt-1">
           {helperText}
         </Text>
       )}

@@ -9,7 +9,30 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // ChickenTinders brand colors
+        // Design token semantic palette
+        brand: {
+          primary: '#F5A623',
+          secondary: '#4A90E2',
+        },
+        surface: {
+          main: '#FFFCF9',
+          card: '#FFFFFF',
+        },
+        text: {
+          display: '#1A1A1A',
+          body: '#4F4F4F',
+          muted: '#9CA3AF',
+        },
+        feedback: {
+          success: '#27AE60',
+          error: '#EB5757',
+          warning: '#F2C94C',
+        },
+        neutral: {
+          gray200: '#E5E7EB',
+        },
+
+        // Legacy palette (kept for compatibility during refactor)
         burgundy: {
           DEFAULT: '#A91D3A',
           dark: '#8B1538',
@@ -25,41 +48,35 @@ module.exports = {
           light: '#4A4541',
         },
         sage: '#4CAF50',
-
-        // Semantic colors mapped to brand palette
         primary: {
-          DEFAULT: '#A91D3A', // ChickenTinders red
+          DEFAULT: '#A91D3A',
           dark: '#8B1538',
           light: '#C72C4A',
         },
         secondary: {
-          DEFAULT: '#FFB800', // Golden yellow
+          DEFAULT: '#FFB800',
           dark: '#E6A500',
           light: '#FFC933',
         },
         accent: {
-          DEFAULT: '#FF6B35', // Warm orange
+          DEFAULT: '#FF6B35',
           dark: '#E55A2B',
           light: '#FF8C5C',
         },
-        success: '#4CAF50', // Fresh green
-        warning: '#FF8C42', // Warm orange
-        error: '#EF4444', // Error red
-        info: '#3B82F6', // Info blue
-
-        // Dark mode color system (foundation only - not fully implemented)
+        success: '#4CAF50',
+        warning: '#FF8C42',
+        error: '#EF4444',
+        info: '#3B82F6',
         background: {
-          DEFAULT: '#FFF5E1', // Cream background
-          dark: '#1A1A1A', // Dark background
+          DEFAULT: '#FFF5E1',
+          dark: '#1A1A1A',
         },
-        surface: {
-          DEFAULT: '#FFFFFF', // Light surface
-          dark: '#2C2C2C', // Dark surface
+        surfaceLegacy: {
+          DEFAULT: '#FFFFFF',
+          dark: '#2C2C2C',
         },
-
-        // Legacy single-value colors (kept for compatibility)
-        dark: '#2C0A0A', // Deep brown
-        textDark: '#2C0A0A', // Deep brown
+        dark: '#2C0A0A',
+        textDark: '#2C0A0A',
         textMuted: '#6B4423',
         textLight: '#9B7653',
       },
@@ -71,9 +88,10 @@ module.exports = {
         body: ['DM Sans', '-apple-system', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'soft': '0 2px 20px rgba(42, 36, 33, 0.08)',
-        'elevated': '0 8px 40px rgba(42, 36, 33, 0.12)',
-        'card': '0 4px 24px rgba(42, 36, 33, 0.1)',
+        soft: '0 2px 20px rgba(42, 36, 33, 0.08)',
+        elevated: '0 8px 40px rgba(42, 36, 33, 0.12)',
+        card: '0 4px 20px rgba(0, 0, 0, 0.08)',
+        overlay: '0 10px 40px rgba(0, 0, 0, 0.15)',
       },
       animation: {
         'fade-in': 'fadeIn 1s cubic-bezier(0.16, 1, 0.3, 1)',

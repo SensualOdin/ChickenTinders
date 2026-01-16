@@ -6,6 +6,7 @@ import { PriceTierSelector } from '../components/ui/PriceTierSelector';
 import { DietaryTagSelector } from '../components/ui/DietaryTagSelector';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import { InfoCard } from '../components/ui/InfoCard';
 import { supabase } from '../lib/supabase';
 import { generateGroupCode, isValidZipCode, getExpirationTime } from '../lib/utils';
 import { getUserId, setUserId, getDisplayName, setDisplayName, getDietaryTags, setDietaryTags } from '../lib/storage';
@@ -211,17 +212,17 @@ export default function CreateGroupPage() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-background">
+    <ScrollView className="flex-1 bg-surface-main">
       <View className="max-w-app mx-auto w-full px-6 py-8">
         {/* Header with refined typography */}
         <View className="mb-8">
           <Text
-            className="text-4xl font-bold text-textDark mb-3 tracking-tight"
-            style={{ fontFamily: 'Playfair Display' }}
+            className="text-4xl font-bold text-text-display mb-3 tracking-tight"
+            style={{ fontFamily: 'Fraunces' }}
           >
             {savedGroupName ? 'Start Session' : 'Create Group'}
           </Text>
-          <Text className="text-base text-textMuted leading-relaxed">
+          <Text className="text-base text-text-body leading-relaxed">
             {savedGroupName
               ? 'Enter your name and create a shareable group code'
               : 'Set your preferences and invite your friends'
@@ -231,24 +232,26 @@ export default function CreateGroupPage() {
 
         {/* Saved Group Banner */}
         {savedGroupName && (
-          <View className="bg-secondary/10 border border-secondary/30 rounded-xl p-4 mb-6">
-            <View className="flex-row items-center gap-2 mb-2">
-              <Text className="text-xl">👥</Text>
-              <Text className="text-textDark font-semibold">
-                Starting Session: {savedGroupName}
-              </Text>
-            </View>
-            <Text className="text-textMuted text-sm">
-              Creating a one-time group code to share with your members. Your preferences are pre-filled from your saved group.
-            </Text>
-          </View>
+          <InfoCard
+            variant="primary"
+            emoji="👥"
+            title={`Starting Session: ${savedGroupName}`}
+            className="mb-6"
+          >
+            Creating a one-time group code to share with your members. Your preferences are pre-filled from your saved group.
+          </InfoCard>
         )}
 
         {/* Error Message */}
         {error && (
-          <View className="bg-red-50 border-l-4 border-primary rounded-xl p-4 mb-6 shadow-soft">
-            <Text className="text-primary text-sm font-medium">{error}</Text>
-          </View>
+          <InfoCard
+            variant="error"
+            emoji="⚠️"
+            title="We couldn’t start your group"
+            className="mb-6"
+          >
+            {error}
+          </InfoCard>
         )}
 
         {/* Form with refined styling */}

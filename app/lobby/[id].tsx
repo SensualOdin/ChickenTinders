@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { View, Text, Pressable, ScrollView, ActivityIndicator, TextInput } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import toast, { Toaster } from 'react-hot-toast';
 import { useGroup } from '../../lib/hooks/useGroup';
@@ -11,6 +11,7 @@ import { copyToClipboard, vibrate, formatPriceTier } from '../../lib/utils';
 import { supabase } from '../../lib/supabase';
 import { getUserId, setUserId, getDisplayName, setDisplayName } from '../../lib/storage';
 import { RESTAURANT_LIMIT } from '../../lib/constants';
+import { colors } from '../../lib/designTokens';
 
 export default function LobbyPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,6 +23,8 @@ export default function LobbyPage() {
   const [swipeProgress, setSwipeProgress] = useState<Record<string, number>>({});
   const [onlineMembers, setOnlineMembers] = useState<Set<string>>(new Set());
   const [userFinished, setUserFinished] = useState(false);
+  const [hypeEvents, setHypeEvents] = useState<string[]>([]);
+  const previousProgress = useRef<Record<string, number>>({});
 
   // Check if current user is in the group, if not prompt to join
   useEffect(() => {
@@ -141,6 +144,35 @@ export default function LobbyPage() {
       subscription.unsubscribe();
     };
   }, [id, members, router]);
+
+  useEffect(() => {
+    if (members.length === 0) return;
+    const previous = previousProgress.current;
+    const updates: string[] = [];
+
+    members.forEach((member) => {
+      const current = swipeProgress[member.user_id] || 0;
+      const prev = previous[member.user_id] || 0;
+      if (current > prev) {
+        updates.push(`${member.user.display_name} is on a roll! (${current} swipes)`);
+      }
+    });
+
+    const finishedCount = members.filter((member) => {
+      const count = swipeProgress[member.user_id] || 0;
+      return count >= RESTAURANT_LIMIT && count > 0;
+    }).length;
+
+    if (finishedCount > 0 && finishedCount === Math.ceil(members.length / 2)) {
+      updates.push('A majority just finished swiping.');
+    }
+
+    if (updates.length > 0) {
+      setHypeEvents((prev) => [...updates, ...prev].slice(0, 6));
+    }
+
+    previousProgress.current = swipeProgress;
+  }, [members, swipeProgress]);
 
   // Presence tracking - track who's online
   useEffect(() => {
@@ -320,19 +352,19 @@ export default function LobbyPage() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" color="#E53935" />
-        <Text className="text-gray-600 mt-4">Loading lobby...</Text>
+      <View className="flex-1 bg-surface-main items-center justify-center">
+        <ActivityIndicator size="large" color={colors.brand.primary} />
+        <Text className="text-text-body mt-4">Loading lobby...</Text>
       </View>
     );
   }
 
   if (error || !group) {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-4">
+      <View className="flex-1 bg-surface-main items-center justify-center px-4">
         <Text className="text-6xl mb-4">😕</Text>
-        <Text className="text-2xl font-bold text-textDark mb-2">Group Not Found</Text>
-        <Text className="text-base text-gray-600 text-center mb-6">
+        <Text className="text-2xl font-bold text-text-display mb-2">Group Not Found</Text>
+        <Text className="text-base text-text-body text-center mb-6">
           {error || 'This group doesn\'t exist or has expired.'}
         </Text>
         <Button
@@ -349,20 +381,21 @@ export default function LobbyPage() {
   // Name prompt modal
   if (showNamePrompt) {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-4">
+      <View className="flex-1 bg-surface-main items-center justify-center px-4">
         <Toaster position="top-center" />
-        <View className="bg-white rounded-2xl p-6 w-full max-w-md shadow-lg">
-          <Text className="text-2xl font-bold text-textDark mb-2">Join Group</Text>
-          <Text className="text-base text-gray-600 mb-6">
+        <View className="bg-surface-card rounded-2xl p-6 w-full max-w-md shadow-lg">
+          <Text className="text-2xl font-bold text-text-display mb-2">Join Group</Text>
+          <Text className="text-base text-text-body mb-6">
             Enter your name to join the group
           </Text>
-          <TextInput
+          <Input
             placeholder="Your name"
             value={tempName}
             onChangeText={setTempName}
-            className="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-base mb-4"
             maxLength={50}
             autoFocus
+            size="md"
+            className="mb-4"
           />
           <Button
             onPress={handleJoinWithName}
@@ -382,37 +415,37 @@ export default function LobbyPage() {
   const canStartSwiping = members.length >= 2;
 
   return (
-    <ScrollView className="flex-1 bg-background">
+    <ScrollView className="flex-1 bg-surface-main">
       <Toaster position="top-center" />
       <View className="max-w-app mx-auto w-full px-4 py-6">
         {/* Header */}
         <View className="items-center mb-6">
           <Text className="text-6xl mb-4">🍗</Text>
-          <Text className="text-lg text-gray-600 mb-2">Group Code</Text>
+          <Text className="text-lg text-text-body mb-2">Group Code</Text>
           <Pressable
             onPress={handleCopyCode}
-            className="bg-white px-6 py-3 rounded-xl border-2 border-primary active:scale-95 mb-2"
+            className="bg-surface-card px-6 py-3 rounded-xl border-2 border-brand-primary active:scale-95 mb-2"
           >
-            <Text className="text-3xl font-bold font-mono text-primary tracking-wider">
+            <Text className="text-3xl font-bold font-mono text-brand-primary tracking-wider">
               {id}
             </Text>
           </Pressable>
-          <Text className="text-sm text-gray-500">Tap code to copy</Text>
+          <Text className="text-sm text-text-muted">Tap code to copy</Text>
         </View>
 
         {/* Group Settings */}
-        <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
-          <Text className="text-lg font-bold text-textDark mb-3">Group Settings</Text>
+        <View className="bg-surface-card rounded-2xl p-4 mb-4 shadow-soft">
+          <Text className="text-lg font-bold text-text-display mb-3">Group Settings</Text>
           <View className="gap-2">
             <View className="flex-row items-center gap-2">
               <Text className="text-2xl">📍</Text>
-              <Text className="text-base text-gray-700">
+              <Text className="text-base text-text-body">
                 Zip: {group.zip_code} • {group.radius} miles
               </Text>
             </View>
             <View className="flex-row items-center gap-2">
               <Text className="text-2xl">💰</Text>
-              <Text className="text-base text-gray-700">
+              <Text className="text-base text-text-body">
                 Price: {formatPriceTier(group.price_tier)}
               </Text>
             </View>
@@ -420,13 +453,13 @@ export default function LobbyPage() {
         </View>
 
         {/* Members */}
-        <View className="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+        <View className="bg-surface-card rounded-2xl p-4 mb-4 shadow-soft">
           <View className="flex-row items-center justify-between mb-3">
-            <Text className="text-lg font-bold text-textDark">
+            <Text className="text-lg font-bold text-text-display">
               Members ({members.length})
             </Text>
             {!canStartSwiping && (
-              <Text className="text-sm text-gray-500">Need 2+ to start</Text>
+              <Text className="text-sm text-text-muted">Need 2+ to start</Text>
             )}
           </View>
           <View className="gap-3">
@@ -444,19 +477,19 @@ export default function LobbyPage() {
                   <View className="relative">
                     <Avatar name={member.user.display_name} size="medium" />
                     {isOnline && (
-                      <View className="absolute bottom-0 right-0 w-3 h-3 bg-success border-2 border-white rounded-full" />
+                      <View className="absolute bottom-0 right-0 w-3 h-3 bg-feedback-success border-2 border-surface-card rounded-full" />
                     )}
                   </View>
                   <View className="flex-1">
                     <View className="flex-row items-center gap-2">
-                      <Text className="text-base font-semibold text-textDark">
+                      <Text className="text-base font-semibold text-text-display">
                         {member.user.display_name}
                       </Text>
                       {isOnline && (
-                        <View className="w-2 h-2 bg-success rounded-full" />
+                        <View className="w-2 h-2 bg-feedback-success rounded-full" />
                       )}
                     </View>
-                    <Text className="text-sm text-gray-500">
+                    <Text className="text-sm text-text-muted">
                       {hasFinished
                         ? 'Done swiping'
                         : isSwiping
@@ -483,11 +516,11 @@ export default function LobbyPage() {
         </View>
 
         {/* Invite Friends Section */}
-        <View className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-4">
-          <Text className="text-base font-bold text-blue-900 mb-2">
+        <View className="bg-brand-secondary/10 border-2 border-brand-secondary/30 rounded-2xl p-4 mb-4">
+          <Text className="text-base font-bold text-brand-secondary mb-2">
             📤 Invite Friends
           </Text>
-          <Text className="text-sm text-blue-800 mb-3">
+          <Text className="text-sm text-text-body mb-3">
             Share the code <Text className="font-mono font-bold">{id}</Text> or send the link
           </Text>
           <Button
@@ -514,6 +547,26 @@ export default function LobbyPage() {
               ? '▶️ Start Swiping'
               : '⏳ Waiting for more people...'}
         </Button>
+
+        {/* Hype Feed */}
+        <View className="bg-surface-card rounded-2xl p-4 mt-6 shadow-soft">
+          <Text className="text-base font-bold text-text-display mb-2">
+            🔥 Hype Feed
+          </Text>
+          {hypeEvents.length === 0 ? (
+            <Text className="text-sm text-text-muted">
+              Waiting for the first swipes...
+            </Text>
+          ) : (
+            <View className="gap-2">
+              {hypeEvents.map((event, index) => (
+                <View key={`${event}-${index}`} className="bg-surface-main rounded-xl px-3 py-2">
+                  <Text className="text-sm text-text-body">{event}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
 
         {/* Back Button */}
         <Button

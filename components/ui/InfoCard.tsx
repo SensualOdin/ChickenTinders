@@ -7,12 +7,12 @@ const infoCardVariants = cva(
   {
     variants: {
       variant: {
-        info: 'bg-blue-50 border-blue-200',
-        success: 'bg-green-50 border-green-200',
-        warning: 'bg-yellow-50 border-yellow-200',
-        error: 'bg-red-50 border-red-200',
-        primary: 'bg-accent/10 border-accent/30',
-        secondary: 'bg-secondary/10 border-secondary/30',
+        info: 'bg-brand-secondary/10 border-brand-secondary/30',
+        success: 'bg-feedback-success/10 border-feedback-success/30',
+        warning: 'bg-feedback-warning/15 border-feedback-warning/40',
+        error: 'bg-feedback-error/10 border-feedback-error/30',
+        primary: 'bg-brand-primary/10 border-brand-primary/30',
+        secondary: 'bg-brand-secondary/10 border-brand-secondary/30',
       },
     },
     defaultVariants: {
@@ -26,12 +26,12 @@ const titleVariants = cva(
   {
     variants: {
       variant: {
-        info: 'text-blue-900',
-        success: 'text-green-900',
-        warning: 'text-yellow-900',
-        error: 'text-red-900',
-        primary: 'text-accent-dark',
-        secondary: 'text-textDark',
+        info: 'text-brand-secondary',
+        success: 'text-feedback-success',
+        warning: 'text-feedback-warning',
+        error: 'text-feedback-error',
+        primary: 'text-brand-primary',
+        secondary: 'text-text-display',
       },
     },
     defaultVariants: {
@@ -45,12 +45,12 @@ const contentVariants = cva(
   {
     variants: {
       variant: {
-        info: 'text-blue-800',
-        success: 'text-green-800',
-        warning: 'text-yellow-800',
-        error: 'text-red-800',
-        primary: 'text-textDark',
-        secondary: 'text-textDark',
+        info: 'text-text-body',
+        success: 'text-text-body',
+        warning: 'text-text-body',
+        error: 'text-text-body',
+        primary: 'text-text-body',
+        secondary: 'text-text-body',
       },
     },
     defaultVariants: {

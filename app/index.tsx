@@ -9,10 +9,10 @@ export default function LandingPage() {
   const { user, profile, isGuest } = useAuth();
 
   return (
-    <ScrollView className="flex-1 bg-cream">
+    <ScrollView className="flex-1 bg-surface-main">
       {/* Navigation */}
       <View className="w-full max-w-app mx-auto">
-        <View className="flex-row justify-between items-center px-8 pt-5 pb-3 bg-cream/95">
+        <View className="flex-row justify-between items-center px-8 pt-5 pb-3 bg-surface-main/95">
           <Pressable
             onPress={() => router.push('/')}
             className="flex-row items-center gap-3 active:scale-95 transition-all"
@@ -22,7 +22,7 @@ export default function LandingPage() {
               style={{ width: 44, height: 44 }}
               resizeMode="contain"
             />
-            <Text className="text-xl font-semibold text-primary" style={{ fontFamily: 'Fraunces' }}>
+            <Text className="text-xl font-semibold text-brand-primary" style={{ fontFamily: 'Fraunces' }}>
               Chicken Tinders
             </Text>
           </Pressable>
@@ -61,23 +61,23 @@ export default function LandingPage() {
           {/* Hero Content - Left Side */}
           <View className="flex-1 min-w-[400px] justify-center">
             {/* Badge */}
-            <View className="flex-row items-center gap-2 px-4 py-2 bg-surface rounded-full shadow-soft self-start mb-6 animate-slide-up">
-              <View className="w-2 h-2 bg-sage rounded-full animate-pulse" />
-              <Text className="text-sm font-semibold text-textMuted tracking-wide">
+            <View className="flex-row items-center gap-2 px-4 py-2 bg-surface-card rounded-full shadow-soft self-start mb-6 animate-slide-up">
+              <View className="w-2 h-2 bg-feedback-success rounded-full animate-pulse" />
+              <Text className="text-sm font-semibold text-text-muted tracking-wide">
                 Free • No app required
               </Text>
             </View>
 
             {/* Title */}
             <Text
-              className="text-6xl font-medium text-charcoal leading-tight mb-6 animate-slide-up"
+              className="text-6xl font-medium text-text-display leading-tight mb-6 animate-slide-up"
               style={{ fontFamily: 'Fraunces', animationDelay: '0.1s' }}
             >
-              Swipe right{'\n'}on <Text className="italic text-primary">dinner</Text>
+              Swipe right{'\n'}on <Text className="italic text-brand-primary">dinner</Text>
             </Text>
 
             {/* Subtitle */}
-            <Text className="text-xl text-textMuted mb-10 max-w-md leading-relaxed animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <Text className="text-xl text-text-muted mb-10 max-w-md leading-relaxed animate-slide-up" style={{ animationDelay: '0.2s' }}>
               End the "where should we eat?" debate forever. Your group swipes, we find your match. No more 47 texts to decide on tacos.
             </Text>
 
@@ -101,24 +101,24 @@ export default function LandingPage() {
             </View>
 
             {/* Trust Signals */}
-            <View className="flex-row gap-6 pt-8 border-t border-cream-dark animate-slide-up" style={{ animationDelay: '0.4s' }}>
+            <View className="flex-row gap-6 pt-8 border-t border-neutral-gray200 animate-slide-up" style={{ animationDelay: '0.4s' }}>
               <View className="flex-row items-center gap-2">
-                <View className="w-5 h-5 bg-sage rounded-full items-center justify-center">
+                <View className="w-5 h-5 bg-feedback-success rounded-full items-center justify-center">
                   <Text className="text-white text-xs font-bold">✓</Text>
                 </View>
-                <Text className="text-sm text-textMuted">No download</Text>
+                <Text className="text-sm text-text-muted">No download</Text>
               </View>
               <View className="flex-row items-center gap-2">
-                <View className="w-5 h-5 bg-sage rounded-full items-center justify-center">
+                <View className="w-5 h-5 bg-feedback-success rounded-full items-center justify-center">
                   <Text className="text-white text-xs font-bold">✓</Text>
                 </View>
-                <Text className="text-sm text-textMuted">No sign-up required</Text>
+                <Text className="text-sm text-text-muted">No sign-up required</Text>
               </View>
               <View className="flex-row items-center gap-2">
-                <View className="w-5 h-5 bg-sage rounded-full items-center justify-center">
+                <View className="w-5 h-5 bg-feedback-success rounded-full items-center justify-center">
                   <Text className="text-white text-xs font-bold">✓</Text>
                 </View>
-                <Text className="text-sm text-textMuted">Works instantly</Text>
+                <Text className="text-sm text-text-muted">Works instantly</Text>
               </View>
             </View>
           </View>
@@ -142,77 +142,77 @@ export default function LandingPage() {
       </View>
 
       {/* How It Works Section */}
-      <View className="w-full bg-surface py-20">
+      <View className="w-full bg-surface-card py-20">
         <View className="max-w-app mx-auto px-8">
           <View className="items-center mb-16">
-            <Text className="text-xs font-bold tracking-widest uppercase text-primary mb-4">
+            <Text className="text-xs font-bold tracking-widest uppercase text-brand-primary mb-4">
               How It Works
             </Text>
             <Text
-              className="text-4xl font-medium text-charcoal mb-4 text-center"
+              className="text-4xl font-medium text-text-display mb-4 text-center"
               style={{ fontFamily: 'Fraunces' }}
             >
               Three steps to dinner bliss
             </Text>
-            <Text className="text-lg text-textMuted text-center">
+            <Text className="text-lg text-text-muted text-center">
               From chaos to consensus in under 2 minutes
             </Text>
           </View>
 
           <View className="flex-row flex-wrap justify-center gap-8">
             {/* Step 1 */}
-            <View className="bg-cream rounded-3xl p-10 items-center max-w-xs hover:transform hover:-translate-y-2 transition-all">
-              <View className="w-12 h-12 bg-primary rounded-full items-center justify-center mb-6">
-                <Text className="text-xl font-bold text-surface" style={{ fontFamily: 'Fraunces' }}>
+            <View className="bg-surface-main rounded-3xl p-10 items-center max-w-xs hover:transform hover:-translate-y-2 transition-all">
+              <View className="w-12 h-12 bg-brand-primary rounded-full items-center justify-center mb-6">
+                <Text className="text-xl font-bold text-surface-card" style={{ fontFamily: 'Fraunces' }}>
                   1
                 </Text>
               </View>
               <Text className="text-5xl mb-6">👥</Text>
               <Text
-                className="text-xl font-semibold text-charcoal mb-3 text-center"
+                className="text-xl font-semibold text-text-display mb-3 text-center"
                 style={{ fontFamily: 'Fraunces' }}
               >
                 Create Your Group
               </Text>
-              <Text className="text-base text-textMuted text-center leading-relaxed">
+              <Text className="text-base text-text-muted text-center leading-relaxed">
                 Start a session and share the code with your hungry friends. No app downloads, no accounts needed.
               </Text>
             </View>
 
             {/* Step 2 */}
-            <View className="bg-cream rounded-3xl p-10 items-center max-w-xs hover:transform hover:-translate-y-2 transition-all">
-              <View className="w-12 h-12 bg-primary rounded-full items-center justify-center mb-6">
-                <Text className="text-xl font-bold text-surface" style={{ fontFamily: 'Fraunces' }}>
+            <View className="bg-surface-main rounded-3xl p-10 items-center max-w-xs hover:transform hover:-translate-y-2 transition-all">
+              <View className="w-12 h-12 bg-brand-primary rounded-full items-center justify-center mb-6">
+                <Text className="text-xl font-bold text-surface-card" style={{ fontFamily: 'Fraunces' }}>
                   2
                 </Text>
               </View>
               <Text className="text-5xl mb-6">👆</Text>
               <Text
-                className="text-xl font-semibold text-charcoal mb-3 text-center"
+                className="text-xl font-semibold text-text-display mb-3 text-center"
                 style={{ fontFamily: 'Fraunces' }}
               >
                 Swipe Your Cravings
               </Text>
-              <Text className="text-base text-textMuted text-center leading-relaxed">
+              <Text className="text-base text-text-muted text-center leading-relaxed">
                 Everyone swipes right on spots they'd love, left on places they'd rather skip. Quick and honest.
               </Text>
             </View>
 
             {/* Step 3 */}
-            <View className="bg-cream rounded-3xl p-10 items-center max-w-xs hover:transform hover:-translate-y-2 transition-all">
-              <View className="w-12 h-12 bg-primary rounded-full items-center justify-center mb-6">
-                <Text className="text-xl font-bold text-surface" style={{ fontFamily: 'Fraunces' }}>
+            <View className="bg-surface-main rounded-3xl p-10 items-center max-w-xs hover:transform hover:-translate-y-2 transition-all">
+              <View className="w-12 h-12 bg-brand-primary rounded-full items-center justify-center mb-6">
+                <Text className="text-xl font-bold text-surface-card" style={{ fontFamily: 'Fraunces' }}>
                   3
                 </Text>
               </View>
               <Text className="text-5xl mb-6">🎉</Text>
               <Text
-                className="text-xl font-semibold text-charcoal mb-3 text-center"
+                className="text-xl font-semibold text-text-display mb-3 text-center"
                 style={{ fontFamily: 'Fraunces' }}
               >
                 See Your Match
               </Text>
-              <Text className="text-base text-textMuted text-center leading-relaxed">
+              <Text className="text-base text-text-muted text-center leading-relaxed">
                 We find the restaurant everyone agrees on. No more compromising, just eating.
               </Text>
             </View>
@@ -221,14 +221,14 @@ export default function LandingPage() {
       </View>
 
       {/* Social Proof Section */}
-      <View className="w-full py-20 bg-cream-dark">
+      <View className="w-full py-20 bg-surface-main">
         <View className="max-w-app mx-auto px-8">
           <View className="items-center mb-16">
-            <Text className="text-xs font-bold tracking-widest uppercase text-primary mb-4">
+            <Text className="text-xs font-bold tracking-widest uppercase text-brand-primary mb-4">
               Loved by Foodies
             </Text>
             <Text
-              className="text-4xl font-medium text-charcoal text-center"
+              className="text-4xl font-medium text-text-display text-center"
               style={{ fontFamily: 'Fraunces' }}
             >
               What groups are saying
@@ -237,49 +237,49 @@ export default function LandingPage() {
 
           <View className="flex-row flex-wrap justify-center gap-6">
             {/* Testimonial 1 */}
-            <View className="bg-surface rounded-2xl p-8 max-w-xs shadow-soft">
-              <Text className="text-base text-textDark mb-6 leading-relaxed">
+            <View className="bg-surface-card rounded-2xl p-8 max-w-xs shadow-soft">
+              <Text className="text-base text-text-body mb-6 leading-relaxed">
                 "Finally ended a 3-year argument about where to get brunch. This app is saving friendships."
               </Text>
               <View className="flex-row items-center gap-4">
-                <View className="w-12 h-12 rounded-full bg-gradient-to-br from-coral to-gold items-center justify-center">
+                <View className="w-12 h-12 rounded-full bg-brand-primary items-center justify-center">
                   <Text className="text-xl">👩</Text>
                 </View>
                 <View>
-                  <Text className="text-sm font-semibold text-charcoal">Sarah M.</Text>
-                  <Text className="text-sm text-textMuted">Friend group of 6</Text>
+                  <Text className="text-sm font-semibold text-text-display">Sarah M.</Text>
+                  <Text className="text-sm text-text-muted">Friend group of 6</Text>
                 </View>
               </View>
             </View>
 
             {/* Testimonial 2 */}
-            <View className="bg-surface rounded-2xl p-8 max-w-xs shadow-soft">
-              <Text className="text-base text-textDark mb-6 leading-relaxed">
+            <View className="bg-surface-card rounded-2xl p-8 max-w-xs shadow-soft">
+              <Text className="text-base text-text-body mb-6 leading-relaxed">
                 "Used this for our office lunch runs. Went from 45 minutes of debate to 2 minutes. Life changing."
               </Text>
               <View className="flex-row items-center gap-4">
-                <View className="w-12 h-12 rounded-full bg-gradient-to-br from-coral to-gold items-center justify-center">
+                <View className="w-12 h-12 rounded-full bg-brand-primary items-center justify-center">
                   <Text className="text-xl">👨</Text>
                 </View>
                 <View>
-                  <Text className="text-sm font-semibold text-charcoal">Marcus T.</Text>
-                  <Text className="text-sm text-textMuted">Team of 12</Text>
+                  <Text className="text-sm font-semibold text-text-display">Marcus T.</Text>
+                  <Text className="text-sm text-text-muted">Team of 12</Text>
                 </View>
               </View>
             </View>
 
             {/* Testimonial 3 */}
-            <View className="bg-surface rounded-2xl p-8 max-w-xs shadow-soft">
-              <Text className="text-base text-textDark mb-6 leading-relaxed">
+            <View className="bg-surface-card rounded-2xl p-8 max-w-xs shadow-soft">
+              <Text className="text-base text-text-body mb-6 leading-relaxed">
                 "My family reunions used to start with a food fight (figuratively). Now we just swipe. Pure genius."
               </Text>
               <View className="flex-row items-center gap-4">
-                <View className="w-12 h-12 rounded-full bg-gradient-to-br from-coral to-gold items-center justify-center">
+                <View className="w-12 h-12 rounded-full bg-brand-primary items-center justify-center">
                   <Text className="text-xl">👵</Text>
                 </View>
                 <View>
-                  <Text className="text-sm font-semibold text-charcoal">Linda K.</Text>
-                  <Text className="text-sm text-textMuted">Extended family</Text>
+                  <Text className="text-sm font-semibold text-text-display">Linda K.</Text>
+                  <Text className="text-sm text-text-muted">Extended family</Text>
                 </View>
               </View>
             </View>
@@ -288,23 +288,23 @@ export default function LandingPage() {
       </View>
 
       {/* Final CTA Section */}
-      <View className="w-full bg-primary py-20">
+      <View className="w-full bg-brand-primary py-20">
         <View className="max-w-app mx-auto px-8 items-center">
           <Text className="text-6xl mb-6">🍽️</Text>
           <Text
-            className="text-4xl font-medium text-surface mb-4 text-center"
+            className="text-4xl font-medium text-surface-card mb-4 text-center"
             style={{ fontFamily: 'Fraunces' }}
           >
             Hungry? Let's settle this.
           </Text>
-          <Text className="text-lg text-surface/80 mb-10 text-center max-w-lg">
+          <Text className="text-lg text-surface-card/80 mb-10 text-center max-w-lg">
             Create a group, invite your crew, and find your perfect dinner match in minutes.
           </Text>
           <Button
             href="/create"
             variant="secondary"
             size="lg"
-            className="bg-surface text-primary"
+            className="bg-surface-card text-brand-primary"
           >
             Start Swiping Now →
           </Button>
@@ -312,26 +312,26 @@ export default function LandingPage() {
       </View>
 
       {/* Footer */}
-      <View className="w-full bg-charcoal py-12">
+      <View className="w-full bg-text-display py-12">
         <View className="max-w-app mx-auto px-8 items-center">
           <View className="flex-row gap-8 mb-6">
             <Link href="/privacy">
-              <Text className="text-sm text-surface/60 tracking-wide hover:text-surface transition-all">
+              <Text className="text-sm text-surface-card/60 tracking-wide hover:text-surface-card transition-all">
                 Privacy Policy
               </Text>
             </Link>
             <Link href="/terms">
-              <Text className="text-sm text-surface/60 tracking-wide hover:text-surface transition-all">
+              <Text className="text-sm text-surface-card/60 tracking-wide hover:text-surface-card transition-all">
                 Terms of Service
               </Text>
             </Link>
             <Link href="/account">
-              <Text className="text-sm text-surface/60 tracking-wide hover:text-surface transition-all">
+              <Text className="text-sm text-surface-card/60 tracking-wide hover:text-surface-card transition-all">
                 Contact Us
               </Text>
             </Link>
           </View>
-          <Text className="text-sm text-surface/40">
+          <Text className="text-sm text-surface-card/40">
             © 2025 Chicken Tinders. Made with 🍗 for hungry groups everywhere.
           </Text>
         </View>

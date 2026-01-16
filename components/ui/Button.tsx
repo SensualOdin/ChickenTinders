@@ -2,6 +2,7 @@ import { Pressable, Text, ActivityIndicator, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
+import { colors } from '../../lib/designTokens';
 import { FontAwesome } from '@expo/vector-icons';
 
 const buttonVariants = cva(
@@ -9,11 +10,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary active:bg-primary-dark',
-        secondary: 'bg-secondary active:bg-secondary-dark',
-        outline: 'border-2 border-primary bg-transparent',
+        primary: 'bg-brand-primary active:opacity-90',
+        secondary: 'bg-brand-secondary active:opacity-90',
+        outline: 'border-2 border-brand-primary bg-transparent',
         ghost: 'bg-transparent',
-        danger: 'bg-error active:bg-error/80',
+        danger: 'bg-feedback-error active:opacity-90',
       },
       size: {
         sm: 'px-4 py-2 rounded-lg',
@@ -37,9 +38,9 @@ const textVariants = cva('font-bold text-center', {
   variants: {
     variant: {
       primary: 'text-white',
-      secondary: 'text-textDark',
-      outline: 'text-primary',
-      ghost: 'text-primary',
+      secondary: 'text-text-display',
+      outline: 'text-brand-primary',
+      ghost: 'text-brand-primary',
       danger: 'text-white',
     },
     size: {
@@ -97,8 +98,8 @@ export function Button({
   const isDisabled = disabled || loading;
 
   const iconColor =
-    variant === 'outline' || variant === 'ghost' ? '#A91D3A' :
-    variant === 'secondary' ? '#2C0A0A' : '#FFFFFF';
+    variant === 'outline' || variant === 'ghost' ? colors.brand.primary :
+    variant === 'secondary' ? colors.text.display : colors.surface.card;
 
   return (
     <Pressable

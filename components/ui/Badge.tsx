@@ -7,14 +7,14 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-gray-100',
-        primary: 'bg-primary',
-        secondary: 'bg-secondary',
-        success: 'bg-success',
-        warning: 'bg-warning',
-        error: 'bg-error',
-        info: 'bg-blue-500',
-        outline: 'bg-transparent border border-gray-300',
+        default: 'bg-neutral-gray200',
+        primary: 'bg-brand-primary',
+        secondary: 'bg-brand-secondary',
+        success: 'bg-feedback-success',
+        warning: 'bg-feedback-warning',
+        error: 'bg-feedback-error',
+        info: 'bg-brand-secondary',
+        outline: 'bg-transparent border border-neutral-gray200',
       },
       size: {
         sm: 'px-2 py-0.5',
@@ -34,14 +34,14 @@ const textVariants = cva(
   {
     variants: {
       variant: {
-        default: 'text-gray-700',
+        default: 'text-text-body',
         primary: 'text-white',
         secondary: 'text-white',
         success: 'text-white',
         warning: 'text-white',
         error: 'text-white',
         info: 'text-white',
-        outline: 'text-gray-700',
+        outline: 'text-text-body',
       },
       size: {
         sm: 'text-xs',

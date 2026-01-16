@@ -21,6 +21,7 @@ import { useEffect } from 'react';
 import { initSentry, captureError } from '../lib/monitoring/sentry';
 import { initAnalytics } from '../lib/monitoring/analytics';
 import { initPerformanceMonitoring } from '../lib/utils/performance';
+import { colors } from '../lib/designTokens';
 
 // Prevent auto-hiding splash screen
 SplashScreen.preventAutoHideAsync();
@@ -40,14 +41,16 @@ function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetError
   }, [error]);
 
   return (
-    <View className="flex-1 items-center justify-center bg-background p-4">
-      <Text className="text-2xl font-bold text-primary mb-4">Oops! Something went wrong</Text>
-      <Text className="text-base text-gray-600 mb-6 text-center">
+    <View className="flex-1 items-center justify-center bg-surface-main p-4">
+      <Text className="text-2xl font-bold text-brand-primary mb-4">
+        Oops! Something went wrong
+      </Text>
+      <Text className="text-base text-text-body mb-6 text-center">
         {error.message || 'An unexpected error occurred'}
       </Text>
       <button
         onClick={resetErrorBoundary}
-        className="bg-primary text-white px-6 py-3 rounded-xl font-semibold"
+        className="bg-brand-primary text-white px-6 py-3 rounded-xl font-semibold"
       >
         Try Again
       </button>
@@ -86,7 +89,7 @@ export default function RootLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: '#F8F6F1' },
+            contentStyle: { backgroundColor: colors.surface.main },
           }}
         >
           <Stack.Screen name="index" />

@@ -9,8 +9,8 @@ const headerVariants = cva(
   {
     variants: {
       variant: {
-        landing: 'bg-cream/95',
-        app: 'bg-background',
+        landing: 'bg-surface-main/95',
+        app: 'bg-surface-main',
         transparent: 'bg-transparent',
       },
       size: {
@@ -64,13 +64,13 @@ export function PageHeader({
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <Text
-            className="text-4xl font-bold text-primary mb-2"
-            style={{ fontFamily: 'Playfair Display' }}
+            className="text-4xl font-bold text-brand-primary mb-2"
+            style={{ fontFamily: 'Fraunces' }}
           >
             {title}
           </Text>
           {subtitle && (
-            <Text className="text-textMuted text-base">
+            <Text className="text-text-body text-base">
               {subtitle}
             </Text>
           )}
@@ -118,7 +118,7 @@ export function NavHeader({
                   resizeMode="contain"
                 />
                 <Text
-                  className="text-xl font-semibold text-primary"
+                  className="text-xl font-semibold text-brand-primary"
                   style={{ fontFamily: 'Fraunces' }}
                 >
                   Chicken Tinders

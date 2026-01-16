@@ -4,7 +4,7 @@ import { cn } from '../../lib/utils';
 import { Button } from './Button';
 
 const modalVariants = cva(
-  'bg-surface rounded-3xl shadow-elevated w-full',
+  'bg-surface-card rounded-3xl shadow-elevated w-full',
   {
     variants: {
       size: {
@@ -48,7 +48,7 @@ export function Modal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View className="flex-1 bg-charcoal/70">
+      <View className="flex-1 bg-text-display/70">
         {/* Backdrop */}
         <Pressable
           onPress={onClose}
@@ -64,10 +64,10 @@ export function Modal({
             <View className={cn(modalVariants({ size }), className)}>
               {/* Header */}
               {(title || closeButton) && (
-                <View className="px-6 pt-6 pb-4 border-b border-cream-dark flex-row items-center justify-between">
+                <View className="px-6 pt-6 pb-4 border-b border-neutral-gray200 flex-row items-center justify-between">
                   {title && (
                     <Text
-                      className="text-xl font-bold text-textDark flex-1"
+                      className="text-xl font-bold text-text-display flex-1"
                       style={{ fontFamily: 'Fraunces' }}
                     >
                       {title}
@@ -76,9 +76,9 @@ export function Modal({
                   {closeButton && (
                     <Pressable
                       onPress={onClose}
-                      className="w-8 h-8 items-center justify-center rounded-full active:bg-gray-100"
+                      className="w-8 h-8 items-center justify-center rounded-full active:bg-neutral-gray200"
                     >
-                      <Text className="text-xl text-textMuted">×</Text>
+                      <Text className="text-xl text-text-body">×</Text>
                     </Pressable>
                   )}
                 </View>
@@ -91,7 +91,7 @@ export function Modal({
 
               {/* Footer */}
               {footer && (
-                <View className="px-6 pb-6 pt-4 border-t border-cream-dark">
+                <View className="px-6 pb-6 pt-4 border-t border-neutral-gray200">
                   {footer}
                 </View>
               )}
@@ -159,7 +159,7 @@ export function ConfirmModal({
         </View>
       }
     >
-      <Text className="text-base text-textDark leading-relaxed">
+      <Text className="text-base text-text-body leading-relaxed">
         {message}
       </Text>
     </Modal>
